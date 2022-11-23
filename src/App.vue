@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { glide } from 'motion';
 import { Motion } from 'motion/vue';
 
@@ -10,6 +10,17 @@ const treshHold = 50;
 const isOpen = ref(false);
 const height = 500;
 
+watch(y, () => {
+  if (!isDragging.value) {
+    isOpen.value = y.value > treshHold;
+  }
+});
+
+watch(isOpen, () => {
+  if (isOpen.value) startYPosition.value = height;
+  else startYPosition.value = 0;
+});
+
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 const startDrag = (e) => {
@@ -19,8 +30,7 @@ const startDrag = (e) => {
 };
 
 const stopDrag = () => {
-  isDragging.value = false;
-
+  if (!isDragging.value) return;
   if (isOpen.value) {
     if (y.value < height - treshHold) {
       y.value = 0;
@@ -37,6 +47,7 @@ const stopDrag = () => {
 
   isOpen.value = y.value > treshHold;
   startYPosition.value = y.value;
+  isDragging.value = false;
 };
 
 const whileDrag = (e) => {
