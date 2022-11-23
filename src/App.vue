@@ -1,26 +1,41 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { glide } from 'motion';
 import { Motion } from 'motion/vue';
 
 const isDragging = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
+const treshHold = 50;
+const isOpen = ref(false);
+const height = 500;
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 const startDrag = (e) => {
-  startYPosition.value = e.clientY || e.touches[0].clientY;
+  startYPosition.value =
+    (e.clientY || e.touches[0].clientY) + (isOpen.value ? 500 : 0);
   isDragging.value = true;
 };
 
 const stopDrag = () => {
   isDragging.value = false;
-  if (y.value >= 50) {
-    y.value = 500;
+
+  if (isOpen.value) {
+    if (y.value < height - treshHold) {
+      y.value = 0;
+    } else {
+      y.value = height;
+    }
   } else {
-    y.value = 0;
+    if (y.value >= treshHold) {
+      y.value = height;
+    } else {
+      y.value = 0;
+    }
   }
+
+  isOpen.value = y.value > treshHold;
   startYPosition.value = y.value;
 };
 
@@ -28,7 +43,7 @@ const whileDrag = (e) => {
   if (!isDragging.value) return;
 
   const clientY = e.clientY || e.touches[0].clientY;
-  y.value = clamp(startYPosition.value - clientY, 0, 500);
+  y.value = clamp(startYPosition.value - clientY, 0, height);
 };
 </script>
 
@@ -44,17 +59,21 @@ const whileDrag = (e) => {
       isDragging: {{ isDragging }} <br />
       startYPosition: {{ startYPosition }} <br />
       y: {{ y }} <br />
+      isOpen: {{ isOpen }} <br />
 
       <button
         class="bg-black text-white rounded px-2 py-1"
-        @click="y = y === 500 ? 0 : 500"
+        @click="y = y === height ? 0 : height"
       >
         toggle
       </button>
     </div>
     <Motion
       :animate="{ y: y * -1 }"
-      :transition="{ duration: isDragging ? 0.1 : 0.3, ease: 'ease-in-out' }"
+      :transition="{
+        duration: isDragging ? 0 : 0.3,
+        ease: isDragging ? 'linear' : 'ease-in-out',
+      }"
       class="fixed bottom-0 w-full left-0"
     >
       <div
