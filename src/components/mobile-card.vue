@@ -129,15 +129,15 @@ if (!props.maxDistance) {
     @touchend="stopDrag"
     @touchmove="whileDrag"
   >
-    <slot name="handle" :startDrag="startDrag">
-      <div
-        @mousedown="startDrag"
-        @touchstart="startDrag"
-        class="cursor-move touch-none select-none drag-handle h-[50px] bg-black w-full text-white flex items-center text-center justify-center"
-      >
-        --------
-      </div>
-    </slot>
+    <div class="touch-none" @mousedown="startDrag" @touchstart="startDrag">
+      <slot name="handle">
+        <div
+          class="cursor-move select-none drag-handle h-[50px] bg-black w-full text-white flex items-center text-center justify-center"
+        >
+          --------
+        </div>
+      </slot>
+    </div>
 
     <div class="absolute overflow-auto" ref="contentRef">
       <slot></slot>
