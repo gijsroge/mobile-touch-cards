@@ -17,7 +17,7 @@ const startYPosition = ref(0);
 const y = ref(0);
 const treshHold = 50;
 const isOpen = ref(false);
-const distance = ref(props.maxDistance);
+const widthOrHeight = ref(props.maxDistance);
 const firstRender = ref(true);
 watch(y, () => {
   if (!isDragging.value) {
@@ -26,14 +26,14 @@ watch(y, () => {
 });
 
 watch(isOpen, () => {
-  if (isOpen.value) startYPosition.value = distance.value;
+  if (isOpen.value) startYPosition.value = widthOrHeight.value;
   else startYPosition.value = 0;
 });
 
 const clamp = (num: number, min: number, max: number) => {
   let position = num;
   if (num > max) {
-    const rest = position - distance.value;
+    const rest = position - widthOrHeight.value;
     position -= rest * 0.6;
   }
   if (num < min) {
@@ -44,7 +44,7 @@ const clamp = (num: number, min: number, max: number) => {
 };
 
 onMounted(() => {
-  window.addEventListener("mouseup", stopDrag);
+  window.addEventListener("mouseup", () => stopDrag());
   window.addEventListener("mousemove", whileDrag);
 });
 onUnmounted(() => {
@@ -56,26 +56,26 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
   document.documentElement.classList.add("overflow-hidden");
   if (e instanceof TouchEvent) {
     startYPosition.value =
-      e.touches[0].clientY + (isOpen.value ? distance.value : 0);
+      e.touches[0].clientY + (isOpen.value ? widthOrHeight.value : 0);
   } else {
-    startYPosition.value = e.clientY + (isOpen.value ? distance.value : 0);
+    startYPosition.value = e.clientY + (isOpen.value ? widthOrHeight.value : 0);
   }
 
   isDragging.value = true;
 };
 
-const stopDrag = () => {
+const stopDrag = (force: boolean = false) => {
   document.documentElement.classList.remove("overflow-hidden");
-  if (!isDragging.value) return;
+  if (!isDragging.value && !force) return;
   if (isOpen.value) {
-    if (y.value < distance.value - treshHold) {
+    if (y.value < widthOrHeight.value - treshHold) {
       y.value = 0;
     } else {
-      y.value = distance.value;
+      y.value = widthOrHeight.value;
     }
   } else {
     if (y.value >= treshHold) {
-      y.value = distance.value;
+      y.value = widthOrHeight.value;
     } else {
       y.value = 0;
     }
@@ -90,12 +90,12 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-  y.value = clamp(startYPosition.value - clientY, 0, distance.value);
+  y.value = clamp(startYPosition.value - clientY, 0, widthOrHeight.value);
 };
 
 const style = computed(() => {
   return {
-    transform: `translateY(-${y.value}px)`,
+    transform: `translateY(${(y.value - widthOrHeight.value) * -1}px)`,
     transition:
       isDragging.value || firstRender.value
         ? "none"
@@ -104,14 +104,13 @@ const style = computed(() => {
 });
 
 // calculate height of contentRef using resize observer
-
 if (!props.maxDistance) {
   const resizeObserver = new ResizeObserver((entries) => {
     const { height: contentHeight } = entries[0].contentRect;
-    distance.value = contentHeight;
-    if (firstRender.value) {
-      y.value = distance.value;
-      setTimeout(() => (firstRender.value = false), 1);
+    widthOrHeight.value = contentHeight;
+    stopDrag(true);
+    if (firstRender.value && props.isOpen) {
+      y.value = widthOrHeight.value;
     }
   });
   watchEffect(() => {
@@ -120,26 +119,32 @@ if (!props.maxDistance) {
     }
   });
 }
+
+onMounted(() => {
+  setTimeout(() => (firstRender.value = false), 1);
+});
 </script>
 
 <template>
   <div
     v-bind:style="style"
-    class="fixed inset-x-0 bottom-0"
-    @touchend="stopDrag"
+    class=""
+    @touchend="() => stopDrag()"
     @touchmove="whileDrag"
+    @mousedown="startDrag"
+    @touchstart="startDrag"
   >
-    <div class="touch-none" @mousedown="startDrag" @touchstart="startDrag">
+    <div class="touch-none select-none">
       <slot name="handle">
         <div
-          class="cursor-move select-none drag-handle h-[50px] bg-black w-full text-white flex items-center text-center justify-center"
+          class="cursor-move drag-handle h-[50px] bg-black w-full text-white flex items-center text-center justify-center"
         >
           --------
         </div>
       </slot>
     </div>
 
-    <div class="absolute overflow-auto" ref="contentRef">
+    <div class="overflow-auto" ref="contentRef">
       <slot></slot>
     </div>
   </div>

@@ -4,7 +4,7 @@ import MobileCard from "./components/mobile-card.vue";
 
 <template>
   <div>
-    <MobileCard :is-open="true">
+    <MobileCard class="w-full fixed bottom-0 left-0">
       <div class="p-10 bg-black">
         <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
