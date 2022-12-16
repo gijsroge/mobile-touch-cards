@@ -3,58 +3,18 @@ import MobileCard from "./components/mobile-card.vue";
 </script>
 
 <template>
-  <MobileCard>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-    <p>
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea odit sit
-      alias vero sunt! Error perspiciatis maxime illum ducimus! Laborum autem
-      veritatis ratione cumque alias repellendus possimus libero animi id?
-    </p>
-  </MobileCard>
+  <div>
+    <MobileCard :is-open="true">
+      <div class="p-10 bg-white">
+        <p>
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+          eligendi labore error veritatis dolor odit ratione soluta reiciendis
+          cum ducimus?
+        </p>
+      </div>
+    </MobileCard>
+  </div>
 </template>
 
 <style scoped>

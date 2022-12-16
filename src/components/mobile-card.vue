@@ -1,13 +1,24 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
 
+const props = defineProps({
+  maxDistance: {
+    type: Number,
+    default: null,
+  },
+  isOpen: {
+    type: Boolean,
+    default: false,
+  },
+});
+const contentRef = ref(null);
 const isDragging = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
 const treshHold = 50;
 const isOpen = ref(false);
-const height = 500;
-
+const distance = ref(props.maxDistance);
+const firstRender = ref(true);
 watch(y, () => {
   if (!isDragging.value) {
     isOpen.value = y.value > treshHold;
@@ -15,14 +26,14 @@ watch(y, () => {
 });
 
 watch(isOpen, () => {
-  if (isOpen.value) startYPosition.value = height;
+  if (isOpen.value) startYPosition.value = distance.value;
   else startYPosition.value = 0;
 });
 
 const clamp = (num: number, min: number, max: number) => {
   let position = num;
   if (num > max) {
-    const rest = position - height;
+    const rest = position - distance.value;
     position -= rest * 0.6;
   }
   if (num < min) {
@@ -32,12 +43,22 @@ const clamp = (num: number, min: number, max: number) => {
   return position;
 };
 
+onMounted(() => {
+  window.addEventListener("mouseup", stopDrag);
+  window.addEventListener("mousemove", whileDrag);
+});
+onUnmounted(() => {
+  window.removeEventListener("click", () => {});
+  window.removeEventListener("mouseup", () => {});
+});
+
 const startDrag = (e: MouseEvent | TouchEvent) => {
   document.documentElement.classList.add("overflow-hidden");
   if (e instanceof TouchEvent) {
-    startYPosition.value = e.touches[0].clientY + (isOpen.value ? 500 : 0);
+    startYPosition.value =
+      e.touches[0].clientY + (isOpen.value ? distance.value : 0);
   } else {
-    startYPosition.value = e.clientY + (isOpen.value ? 500 : 0);
+    startYPosition.value = e.clientY + (isOpen.value ? distance.value : 0);
   }
 
   isDragging.value = true;
@@ -47,14 +68,14 @@ const stopDrag = () => {
   document.documentElement.classList.remove("overflow-hidden");
   if (!isDragging.value) return;
   if (isOpen.value) {
-    if (y.value < height - treshHold) {
+    if (y.value < distance.value - treshHold) {
       y.value = 0;
     } else {
-      y.value = height;
+      y.value = distance.value;
     }
   } else {
     if (y.value >= treshHold) {
-      y.value = height;
+      y.value = distance.value;
     } else {
       y.value = 0;
     }
@@ -65,30 +86,50 @@ const stopDrag = () => {
   isDragging.value = false;
 };
 
-const whileDrag = (e) => {
+const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
-  const clientY = e.clientY || e.touches[0].clientY;
-  y.value = clamp(startYPosition.value - clientY, 0, height);
+  const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+  y.value = clamp(startYPosition.value - clientY, 0, distance.value);
 };
 
 const style = computed(() => {
   return {
     transform: `translateY(-${y.value}px)`,
-    transition: isDragging.value ? "none" : "transform 0.3s ease-out",
+    transition:
+      isDragging.value || firstRender.value
+        ? "none"
+        : "transform 0.3s ease-out",
   };
 });
+
+// calculate height of contentRef using resize observer
+
+if (!props.maxDistance) {
+  const resizeObserver = new ResizeObserver((entries) => {
+    const { height: contentHeight } = entries[0].contentRect;
+    distance.value = contentHeight;
+    if (firstRender.value) {
+      y.value = distance.value;
+      setTimeout(() => (firstRender.value = false), 1);
+    }
+  });
+  watchEffect(() => {
+    if (contentRef.value) {
+      resizeObserver.observe(contentRef.value);
+    }
+  });
+}
 </script>
 
 <template>
   <div
-    class="overflow-hidden"
-    @mouseup="stopDrag"
+    v-bind:style="style"
+    class="fixed inset-x-0 bottom-0"
     @touchend="stopDrag"
     @touchmove="whileDrag"
-    @mousemove="whileDrag"
   >
-    <div v-bind:style="style" class="fixed bottom-0 w-full left-0">
+    <slot name="handle" :startDrag="startDrag">
       <div
         @mousedown="startDrag"
         @touchstart="startDrag"
@@ -96,10 +137,10 @@ const style = computed(() => {
       >
         --------
       </div>
+    </slot>
 
-      <div class="absolute overflow-scroll h-[500px]">
-        <slot></slot>
-      </div>
+    <div class="absolute overflow-auto" ref="contentRef">
+      <slot></slot>
     </div>
   </div>
 </template>
