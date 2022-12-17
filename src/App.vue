@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import MobileCard from "./components/mobile-card.vue";
+
+const mobileCardProgress = ref(0);
 </script>
 
 <template>
   <div>
-    <MobileCard class="w-full fixed bottom-0 left-0">
-      <div class="p-10 bg-black">
+    <span
+      class="fixed inset-0 bg-black"
+      :style="{ opacity: mobileCardProgress * 0.5 }"
+    ></span>
+    <MobileCard
+      class="m-2 rounded-xl overflow-hidden h-[90vh] flex flex-col"
+      @progress="(progress: number) => mobileCardProgress = progress"
+    >
+      <div class="p-10 bg-black grow text-white">
         <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
@@ -17,16 +27,4 @@ import MobileCard from "./components/mobile-card.vue";
   </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>
