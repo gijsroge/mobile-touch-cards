@@ -21,7 +21,6 @@ const props = defineProps({
 const emit = defineEmits(["progress"]);
 
 const cardRef = ref<HTMLElement | null>(null);
-const contentRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const startYPosition = ref(0);
@@ -89,7 +88,7 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
   isDragging.value = true;
 };
 
-const stopDrag = (force: boolean = false) => {
+const stopDrag = ({ force }: { force: boolean } = { force: false }) => {
   document.documentElement.classList.remove("overflow-hidden");
   if (!isDragging.value && !force) return;
   if (isOpen.value) {
@@ -120,6 +119,7 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
 
 const style = computed(() => {
   return {
+    willChange: "transform",
     transform: `translateY(${(y.value - heightOfContent.value) * -1}px)`,
     transition:
       isDragging.value || firstRender.value
@@ -128,16 +128,13 @@ const style = computed(() => {
   };
 });
 
-// calculate height of contentRef using resize observer
-
+// calculate height of cardRef using resize observer
 const resizeObserver = new ResizeObserver((entries) => {
   if (!cardRef.value || !handleRef.value) return;
-
-  console.log(cardRef.value);
   const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
   if (handleRef.value)
     heightOfContent.value = contentHeight - handleRef.value.offsetHeight;
-  stopDrag(true);
+  stopDrag({ force: true });
   if (firstRender.value && props.isOpen) {
     y.value = heightOfContent.value;
   }
@@ -167,7 +164,7 @@ onMounted(() => {
       <div class="touch-none select-none" ref="handleRef">
         <slot name="handle">
           <div
-            class="cursor-move drag-handle h-[50px] bg-black w-full text-white flex items-center text-center justify-center"
+            class="cursor-move drag-handle h-[50px] relative bg-black w-full text-white flex items-center text-center justify-center"
             v-html="handleAsset"
           ></div>
         </slot>
