@@ -5,7 +5,6 @@ export default {
 </script>
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
-import handleAsset from "../assets/handle";
 
 const props = defineProps({
   maxDistance: {
@@ -16,12 +15,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  handleHeight: {
+    type: Number,
+    default: 50,
+  },
 });
 
 const emit = defineEmits(["progress"]);
 
 const cardRef = ref<HTMLElement | null>(null);
-const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
@@ -130,10 +132,10 @@ const style = computed(() => {
 
 // calculate height of cardRef using resize observer
 const resizeObserver = new ResizeObserver((entries) => {
-  if (!cardRef.value || !handleRef.value) return;
+  if (!cardRef.value) return;
   const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
-  if (handleRef.value)
-    heightOfContent.value = contentHeight - handleRef.value.offsetHeight;
+
+  heightOfContent.value = contentHeight - props.handleHeight;
   stopDrag({ force: true });
   if (firstRender.value && props.isOpen) {
     y.value = heightOfContent.value;
@@ -155,21 +157,12 @@ onMounted(() => {
     <div
       v-bind="$attrs"
       :style="{ marginTop: '0px !important' }"
-      class=""
+      class="touch-none"
       @touchend="() => stopDrag()"
       @touchmove="whileDrag"
       @mousedown="startDrag"
       @touchstart="startDrag"
     >
-      <div class="touch-none select-none" ref="handleRef">
-        <slot name="handle">
-          <div
-            class="cursor-move drag-handle h-[50px] relative bg-black w-full text-white flex items-center text-center justify-center"
-            v-html="handleAsset"
-          ></div>
-        </slot>
-      </div>
-
       <slot></slot>
     </div>
   </div>
