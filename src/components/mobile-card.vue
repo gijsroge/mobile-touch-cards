@@ -14,7 +14,7 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { clamp, soften } from "..";
+import { clamp, MobileCard, soften } from "..";
 import handleAsset from "../assets/handle";
 const props = defineProps({
   slideFrom: {
@@ -42,9 +42,13 @@ const props = defineProps({
   },
 });
 
-// external --------------------------
-
-// external --------------------------
+const mobileCard = new MobileCard({
+  slideFrom: props.slideFrom,
+  maxDistance: props.maxDistance,
+  isOpen: props.isOpen,
+  handleHeight: props.handleHeight,
+  dragEntireCard: props.dragEntireCard,
+});
 
 const emit = defineEmits(["progress"]);
 
@@ -78,12 +82,10 @@ watch(isOpen, () => {
 });
 
 onMounted(() => {
-  window.addEventListener("mouseup", () => stopDrag());
-  window.addEventListener("mousemove", whileDrag);
+  mobileCard.mount();
 });
 onUnmounted(() => {
-  window.removeEventListener("click", () => {});
-  window.removeEventListener("mouseup", () => {});
+  mobileCard.unMount();
 });
 
 const startDrag = (e: MouseEvent | TouchEvent) => {

@@ -48,3 +48,41 @@ export const getStyles = ({
   }
   return styles;
 };
+
+export class MobileCard {
+  slideFrom: "top" | "bottom";
+  maxDistance: number | null;
+  isOpen: boolean;
+  handleHeight: number | null;
+  dragEntireCard: boolean;
+
+  constructor({
+    slideFrom,
+    maxDistance,
+    isOpen,
+    handleHeight,
+    dragEntireCard,
+  }: {
+    slideFrom?: "top" | "bottom";
+    maxDistance?: number | null;
+    isOpen?: boolean;
+    handleHeight?: number | null;
+    dragEntireCard?: boolean;
+  }) {
+    this.slideFrom = slideFrom || "top";
+    this.maxDistance = maxDistance || null;
+    this.isOpen = isOpen || false;
+    this.handleHeight = handleHeight || null;
+    this.dragEntireCard = dragEntireCard || false;
+  }
+
+  mount() {
+    window.addEventListener("mouseup", () => stopDrag());
+    window.addEventListener("mousemove", whileDrag);
+  }
+
+  unMount() {
+    window.addEventListener("mouseup", () => stopDrag());
+    window.addEventListener("mousemove", whileDrag);
+  }
+}
