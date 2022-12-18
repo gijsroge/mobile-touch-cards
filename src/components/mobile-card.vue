@@ -4,9 +4,26 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
-
+import {
+  computed,
+  CSSProperties,
+  onMounted,
+  onUnmounted,
+  PropType,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
+import { clamp, soften } from "..";
+import handleAsset from "../assets/handle";
 const props = defineProps({
+  slideFrom: {
+    type: Object as PropType<"top" | "bottom">,
+    default: "bottom",
+    validator(value: string) {
+      return ["top", "bottom"].includes(value);
+    },
+  },
   maxDistance: {
     type: Number,
     default: null,
@@ -17,13 +34,23 @@ const props = defineProps({
   },
   handleHeight: {
     type: Number,
-    default: 50,
+    default: null,
+  },
+  dragEntireCard: {
+    type: Boolean,
+    default: false,
   },
 });
 
+// external --------------------------
+
+// external --------------------------
+
 const emit = defineEmits(["progress"]);
 
+const handleHeightInternal = ref(props.handleHeight || 50);
 const cardRef = ref<HTMLElement | null>(null);
+const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
@@ -37,11 +64,6 @@ watch(y, () => {
   }
 });
 
-// clamp function
-const clamp = (num: number, min: number, max: number) => {
-  return Math.min(Math.max(num, min), max);
-};
-
 const progress = computed(() => {
   return clamp(y.value / heightOfContent.value, 0, 1);
 });
@@ -54,19 +76,6 @@ watch(isOpen, () => {
   if (isOpen.value) startYPosition.value = heightOfContent.value;
   else startYPosition.value = 0;
 });
-
-const soften = (num: number, min: number, max: number) => {
-  let position = num;
-  if (num > max) {
-    const rest = position - heightOfContent.value;
-    position -= rest * 0.6;
-  }
-  if (num < min) {
-    const rest = position;
-    position -= rest * 0.6;
-  }
-  return position;
-};
 
 onMounted(() => {
   window.addEventListener("mouseup", () => stopDrag());
@@ -116,26 +125,43 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-  y.value = soften(startYPosition.value - clientY, 0, heightOfContent.value);
+  y.value = soften(
+    startYPosition.value - clientY,
+    0,
+    heightOfContent.value,
+    heightOfContent.value
+  );
 };
 
 const style = computed(() => {
-  return {
+  const styles: CSSProperties = {
     willChange: "transform",
-    transform: `translateY(${(y.value - heightOfContent.value) * -1}px)`,
+    left: 0,
+    right: 0,
     transition:
       isDragging.value || firstRender.value
         ? "none"
         : "transform 0.3s ease-out",
   };
+  if (props.slideFrom === "top") {
+    styles.top = 0;
+    styles.transform = `translateY(${y.value}px)`;
+  }
+  if (props.slideFrom === "bottom") {
+    styles.transform = `translateY(${
+      (y.value - heightOfContent.value) * -1
+    }px)`;
+  }
+  return styles;
 });
 
 // calculate height of cardRef using resize observer
 const resizeObserver = new ResizeObserver((entries) => {
   if (!cardRef.value) return;
   const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
-
-  heightOfContent.value = contentHeight - props.handleHeight;
+  if (handleRef.value && !props.handleHeight)
+    handleHeightInternal.value = handleRef.value.clientHeight;
+  heightOfContent.value = contentHeight - handleHeightInternal.value;
   stopDrag({ force: true });
   if (firstRender.value && props.isOpen) {
     y.value = heightOfContent.value;
@@ -153,16 +179,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="cardRef" class="fixed bottom-0 left-0 right-0" v-bind:style="style">
+  <div ref="cardRef" class="fixed" v-bind:style="style">
     <div
       v-bind="$attrs"
       :style="{ marginTop: '0px !important' }"
       class="touch-none"
       @touchend="() => stopDrag()"
       @touchmove="whileDrag"
-      @mousedown="startDrag"
-      @touchstart="startDrag"
+      @mousedown="(event) => (dragEntireCard ? startDrag(event) : null)"
+      @touchstart="(event) => (dragEntireCard ? startDrag(event) : null)"
     >
+      <div
+        ref="handleRef"
+        @mousedown="(event) => (!dragEntireCard ? startDrag(event) : null)"
+        @touchstart="(event) => (!dragEntireCard ? startDrag(event) : null)"
+      >
+        <slot name="handle">
+          <div
+            class="cursor-move drag-handle h-[50px] relative w-full text-white flex items-center text-center justify-center"
+            v-html="handleAsset"
+          ></div>
+        </slot>
+      </div>
       <slot></slot>
     </div>
   </div>
