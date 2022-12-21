@@ -12,7 +12,7 @@ const mobileCardProgress = ref(0);
       :style="{ opacity: mobileCardProgress * 0.5 }"
     ></span>
     <div
-      class="container p-4 prose space-y-4 origin-top"
+      class="mx-auto p-4 prose space-y-4 origin-top"
       :style="{ transform: `scale(${1 - mobileCardProgress * 0.1})` }"
     >
       <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
