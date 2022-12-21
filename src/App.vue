@@ -7,34 +7,223 @@ const mobileCardProgress = ref(0);
 <template>
   <div>
     <span
-      class="fixed inset-0 bg-black"
+      v-if="mobileCardProgress > 0"
+      class="fixed inset-0 bg-black z-10"
       :style="{ opacity: mobileCardProgress * 0.5 }"
     ></span>
-    <!-- <MobileCard
-      :handle-height="50"
-      class="m-2 rounded-xl overflow-hidden flex flex-col"
+    <div
+      class="container p-4 prose space-y-4 origin-top"
+      :style="{ transform: `scale(${1 - mobileCardProgress * 0.1})` }"
+    >
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+      <p class="bg-black/5 rounded p-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum, ex
+        molestias amet voluptates sed doloremque optio aspernatur quae, quisquam
+        quidem beatae delectus. Officia eveniet aspernatur minima laboriosam
+        vero quas ipsum.
+      </p>
+    </div>
+    <MobileCard
+      class="m-2 rounded-xl overflow-hidden flex flex-col p-10 pt-0 bg-black text-white"
+      root-class="z-20"
       @progress="(progress: number) => mobileCardProgress = progress"
     >
-      <div class="flex flex-col grow">
-        <div
-          class="cursor-move drag-handle h-[50px] relative bg-black w-full text-white flex items-center text-center justify-center"
-          v-html="handleAsset"
-        ></div>
+      <p class="p-3">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
+        ducimus?
+      </p>
+      <p class="p-3">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
+        ducimus?
+      </p>
+      <p class="p-3">
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
+        ducimus?
+      </p>
+    </MobileCard>
 
-        <div class="p-10 bg-black grow text-white">
-          <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-            quidem, eum adipisci odio est ipsum eaque, dolore doloribus
-            voluptatum eligendi labore error veritatis dolor odit ratione soluta
-            reiciendis cum ducimus?
-          </p>
-        </div>
-      </div>
-    </MobileCard> -->
-
-    <MobileCard
+    <!-- <MobileCard
       :drag-entire-card="true"
-      class="bg-gradient-to-r from-black to-blue-900 p-10 pt-0 h-[80vh] text-white flex flex-col"
+      class="bg-gradient-to-r from-black to-blue-900 p-10 m-2 rounded pt-0 h-[80vh] text-white flex flex-col"
     >
       <div class="overflow-auto" data-ignore-drag>
         <p>
@@ -86,7 +275,19 @@ const mobileCardProgress = ref(0);
           aliquam, delectus atque sapiente adipisci?
         </p>
       </div>
-    </MobileCard>
+    </MobileCard> -->
+
+    <!-- <MobileCard
+      :drag-entire-card="true"
+      class="bg-gradient-to-r from-black to-blue-900 p-10 m-2 rounded pt-0 text-white flex flex-col"
+    >
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus
+        doloremque omnis porro vel? Quibusdam, enim modi doloribus possimus,
+        laborum laboriosam similique ab a nemo odit aliquam, delectus atque
+        sapiente adipisci?
+      </p>
+    </MobileCard> -->
   </div>
 </template>
 

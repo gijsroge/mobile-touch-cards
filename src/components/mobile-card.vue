@@ -3,6 +3,7 @@ export default {
   inheritAttrs: false,
 };
 </script>
+
 <script lang="ts" setup>
 import {
   computed,
@@ -14,8 +15,9 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { clamp, findAscendingAttribute, soften } from "..";
+import { clamp, findAscendingAttribute, soften, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
+
 const props = defineProps({
   slideFrom: {
     type: Object as PropType<"top" | "bottom">,
@@ -23,6 +25,10 @@ const props = defineProps({
     validator(value: string) {
       return ["top", "bottom"].includes(value);
     },
+  },
+  rootClass: {
+    type: String,
+    default: "",
   },
   maxDistance: {
     type: Number,
@@ -34,23 +40,34 @@ const props = defineProps({
   },
   dragEntireCard: {
     type: Boolean,
-    default: false,
+    default: true,
+  },
+  autoClose: {
+    type: Boolean,
+    default: true,
   },
 });
 
-const emit = defineEmits(["progress"]);
+let animationFrame: number = 0;
 
+const emit = defineEmits([
+  "progress",
+  "open",
+  "close",
+  "drag",
+  "start-drag",
+  "stop-drag",
+]);
 const handleHeight = ref(50);
 const cardRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
+const isOpen = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
-const treshHold = 50;
-const isOpen = ref(false);
 const heightOfContent = ref(props.maxDistance);
+const treshHold = 50;
 const firstRender = ref(true);
-let animationFrame: number = 0;
 const progress = computed(() => {
   return clamp(y.value / heightOfContent.value, 0, 1);
 });
@@ -62,14 +79,25 @@ watch(y, () => {
   }
 });
 
+const { animatedProgress } = useTweenNumber({
+  progress: progress,
+  duration: 250,
+});
+
 // emit progress so parent can listen to it
-watch(progress, () => {
-  emit("progress", progress.value);
+watch(animatedProgress, () => {
+  // tween between newValue and oldValue using requestAnimationFrame
+  emit("progress", animatedProgress.value);
 });
 
 watch(isOpen, () => {
-  if (isOpen.value) startYPosition.value = heightOfContent.value;
-  else startYPosition.value = 0;
+  if (isOpen.value) emit("close");
+  else emit("open");
+  if (isOpen.value) {
+    startYPosition.value = heightOfContent.value;
+  } else {
+    startYPosition.value = 0;
+  }
 });
 
 onMounted(() => {
@@ -78,8 +106,17 @@ onMounted(() => {
 });
 onUnmounted(() => {
   window.removeEventListener("click", () => {});
+  window.removeEventListener("mousemove", () => {});
   window.removeEventListener("mouseup", () => {});
 });
+
+const close = () => {
+  y.value = 0;
+};
+
+const open = () => {
+  y.value = heightOfContent.value;
+};
 
 const startDrag = (e: MouseEvent | TouchEvent) => {
   // if the user clicked on an element with the data-ignore-drag attribute,
@@ -90,6 +127,7 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
   )
     return;
 
+  emit("start-drag");
   document.documentElement.style.setProperty("overflow", "hidden");
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
   startYPosition.value = clientY + (isOpen.value ? heightOfContent.value : 0);
@@ -117,22 +155,20 @@ const stopDrag = () => {
 
   startYPosition.value = y.value;
   isDragging.value = false;
+  emit("stop-drag");
 };
 
 const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
-  animationFrame && window.cancelAnimationFrame(animationFrame);
-
-  animationFrame = window.requestAnimationFrame(function () {
-    const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-    y.value = soften(
-      startYPosition.value - clientY,
-      0,
-      heightOfContent.value,
-      heightOfContent.value
-    );
-  });
+  emit("drag");
+  const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+  y.value = soften(
+    startYPosition.value - clientY,
+    0,
+    heightOfContent.value,
+    heightOfContent.value
+  );
 };
 
 const style = computed(() => {
@@ -145,17 +181,15 @@ const style = computed(() => {
     transition:
       isDragging.value || firstRender.value
         ? "none"
-        : "transform 0.3s ease-out",
+        : "transform 0.2s ease-out",
   };
   if (props.slideFrom === "top") {
-    styles.top = 0;
+    styles.bottom = "100%";
     styles.transform = `translateY(${y.value}px)`;
   }
   if (props.slideFrom === "bottom") {
-    styles.bottom = 0;
-    styles.transform = `translateY(${
-      (y.value - heightOfContent.value) * -1
-    }px)`;
+    styles.top = "100%";
+    styles.transform = `translateY(${(y.value + handleHeight.value) * -1}px)`;
   }
   return styles;
 });
@@ -170,7 +204,6 @@ const resizeObserver = new ResizeObserver((entries) => {
   // keep track of the height of the content
   heightOfContent.value =
     clamp(contentHeight, 0, viewportHeight) - handleHeight.value;
-  console.log(clamp(contentHeight, 0, viewportHeight));
   // on the first render, if the card is open, set the y value to the height of the content,
   // this is to prevent the card from jumping open on the first render
   if (firstRender.value && props.isOpen) {
@@ -187,7 +220,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="cardRef" v-bind:style="style">
+  <div ref="cardRef" v-bind:style="style" :class="[rootClass]" data-modal-sheet>
     <div
       v-bind="$attrs"
       :style="{ marginTop: '0px !important', touchAction: 'none' }"
@@ -208,6 +241,7 @@ onMounted(() => {
         <slot name="handle">
           <div
             :style="{
+              userSelect: 'none',
               cursor: 'move',
               height: '50px',
               position: 'relative',

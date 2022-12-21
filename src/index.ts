@@ -1,3 +1,5 @@
+import { ref, Ref, watch } from "vue";
+
 export const clamp = (num: number, min: number, max: number) => {
   return Math.min(Math.max(num, min), max);
 };
@@ -20,35 +22,6 @@ export const soften = (
   return position;
 };
 
-export const getStyles = ({
-  isDragging,
-  firstRender,
-  heightOfContent,
-  slideFrom,
-  y,
-}: {
-  isDragging: boolean;
-  firstRender: boolean;
-  heightOfContent: number;
-  slideFrom: "top" | "bottom";
-  y: number;
-}) => {
-  const styles: any = {
-    willChange: "transform",
-    left: 0,
-    right: 0,
-    transition: isDragging || firstRender ? "none" : "transform 0.3s ease-out",
-  };
-  if (slideFrom === "top") {
-    styles.top = 0;
-    styles.transform = `translateY(${y}px)`;
-  }
-  if (slideFrom === "bottom") {
-    styles.transform = `translateY(${(y - heightOfContent) * -1}px)`;
-  }
-  return styles;
-};
-
 export const findAscendingAttribute = (
   el: Node | HTMLElement,
   attribute: string
@@ -57,4 +30,44 @@ export const findAscendingAttribute = (
     el = el.parentNode;
     return (el as HTMLElement).hasAttribute(attribute) ? el : null;
   }
+};
+
+export const isChildOf = ({
+  parent,
+  child,
+}: {
+  parent: Element;
+  child: Element | string | null;
+}) => {
+  if (typeof child === "string") child = parent.querySelector(child);
+  if (!child) return false;
+  return parent.contains(child);
+};
+
+export const useTweenNumber = ({
+  progress,
+  duration,
+}: {
+  progress: Ref<number>;
+  duration: number;
+}) => {
+  const animatedProgress = ref(progress.value);
+  watch(progress, (newValue, oldValue) => tween(oldValue, newValue));
+
+  const tween = (start: number, end: number) => {
+    // tween number between start and end using cubic-bezier and requestAnimationFrame
+    const startTime = performance.now();
+    const ease = (t: number) => t * (2 - t);
+    const update = () => {
+      const time = performance.now() - startTime;
+      const t = clamp(time / duration, 0, 1);
+      animatedProgress.value = ease(t) * (end - start) + start;
+      if (t < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+    requestAnimationFrame(update);
+  };
+
+  return { animatedProgress };
 };
