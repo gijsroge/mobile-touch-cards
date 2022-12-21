@@ -10,7 +10,6 @@ import {
   CSSProperties,
   onMounted,
   onUnmounted,
-  PropType,
   ref,
   watch,
   watchEffect,
@@ -19,13 +18,6 @@ import { clamp, findAscendingAttribute, soften, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
 
 const props = defineProps({
-  slideFrom: {
-    type: Object as PropType<"top" | "bottom">,
-    default: "bottom",
-    validator(value: string) {
-      return ["top", "bottom"].includes(value);
-    },
-  },
   rootClass: {
     type: String,
     default: "",
@@ -183,14 +175,10 @@ const style = computed(() => {
         ? "none"
         : "transform 0.2s ease-out",
   };
-  if (props.slideFrom === "top") {
-    styles.bottom = "100%";
-    styles.transform = `translateY(${y.value}px)`;
-  }
-  if (props.slideFrom === "bottom") {
-    styles.top = "100%";
-    styles.transform = `translateY(${(y.value + handleHeight.value) * -1}px)`;
-  }
+
+  styles.top = "100%";
+  styles.transform = `translateY(${(y.value + handleHeight.value) * -1}px)`;
+
   return styles;
 });
 
