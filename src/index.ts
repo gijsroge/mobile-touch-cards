@@ -48,3 +48,13 @@ export const getStyles = ({
   }
   return styles;
 };
+
+export const findAscendingAttribute = (
+  el: Node | HTMLElement,
+  attribute: string
+) => {
+  while (el.parentNode) {
+    el = el.parentNode;
+    return (el as HTMLElement).hasAttribute(attribute) ? el : null;
+  }
+};

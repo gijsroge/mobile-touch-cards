@@ -33,11 +33,10 @@ const mobileCardProgress = ref(0);
     </MobileCard> -->
 
     <MobileCard
-      :drag-entire-card="false"
-      class="bg-gradient-to-r from-black to-blue-900 p-10 pt-0 text-white h-screen flex flex-col"
-      slide-from="bottom"
+      :drag-entire-card="true"
+      class="bg-gradient-to-r from-black to-blue-900 p-10 pt-0 h-[80vh] text-white flex flex-col"
     >
-      <div class="overflow-auto">
+      <div class="overflow-auto" data-ignore-drag>
         <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
           Necessitatibus doloremque omnis porro vel? Quibusdam, enim modi
