@@ -23,28 +23,36 @@ const MobileSheetProgress = ref(0);
       <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
     </div>
     <MobileSheet
-      class="m-2 rounded-xl overflow-hidden flex flex-col p-10 pt-0 bg-black text-white"
+      class="mx-2 rounded-t-xl md:max-w-[400px] md:ml-auto overflow-hidden flex flex-col px-8 pb-6 max-h-[calc(100vh-.5rem)] bg-black text-white"
       root-class="z-20"
       @progress="(progress: number) => MobileSheetProgress = progress"
     >
-      <p class="p-3">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
-        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
-        ducimus?
-      </p>
-      <p class="p-3">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
-        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
-        ducimus?
-      </p>
-      <p class="p-3">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
-        quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
-        eligendi labore error veritatis dolor odit ratione soluta reiciendis cum
-        ducimus?
-      </p>
+      <div class="overflow-auto space-y-3" data-ignore-drag>
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+          eligendi labore error veritatis dolor odit ratione soluta reiciendis
+          cum ducimus?
+        </p>
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+          eligendi labore error veritatis dolor odit ratione soluta reiciendis
+          cum ducimus?
+        </p>
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+          eligendi labore error veritatis dolor odit ratione soluta reiciendis
+          cum ducimus?
+        </p>
+        <p class="">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
+          quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
+          eligendi labore error veritatis dolor odit ratione soluta reiciendis
+          cum ducimus?
+        </p>
+      </div>
     </MobileSheet>
 
     <!-- <MobileSheet
