@@ -47,7 +47,7 @@ const props = defineProps({
     default: true,
   },
 });
-
+const isSsr = typeof document !== "undefined";
 let animationFrame: number = 0;
 
 const emit = defineEmits([
@@ -195,23 +195,25 @@ const style = computed(() => {
 });
 
 // calculate height of cardRef using resize observer
-const resizeObserver = new ResizeObserver((entries) => {
-  if (!cardRef.value) return;
-  const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
-  const viewportHeight = window.innerHeight;
-  // keep track of the height of the handle
-  if (handleRef.value) handleHeight.value = handleRef.value.clientHeight;
-  // keep track of the height of the content
-  heightOfContent.value =
-    clamp(contentHeight, 0, viewportHeight) - handleHeight.value;
-  // on the first render, if the card is open, set the y value to the height of the content,
-  // this is to prevent the card from jumping open on the first render
-  if (firstRender.value && props.isOpen) {
-    y.value = heightOfContent.value;
-  }
-});
+const resizeObserver = isSsr
+  ? new ResizeObserver((entries) => {
+      if (!cardRef.value) return;
+      const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
+      const viewportHeight = window.innerHeight;
+      // keep track of the height of the handle
+      if (handleRef.value) handleHeight.value = handleRef.value.clientHeight;
+      // keep track of the height of the content
+      heightOfContent.value =
+        clamp(contentHeight, 0, viewportHeight) - handleHeight.value;
+      // on the first render, if the card is open, set the y value to the height of the content,
+      // this is to prevent the card from jumping open on the first render
+      if (firstRender.value && props.isOpen) {
+        y.value = heightOfContent.value;
+      }
+    })
+  : null;
 watchEffect(() =>
-  cardRef.value ? resizeObserver.observe(cardRef.value) : null
+  cardRef.value ? resizeObserver?.observe(cardRef.value) : null
 );
 
 onMounted(() => {
