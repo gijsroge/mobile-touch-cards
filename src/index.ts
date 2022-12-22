@@ -1,4 +1,4 @@
-import { onUnmounted, ref, Ref, watch } from "vue";
+import { onUnmounted, ref, Ref, watch, watchEffect } from "vue";
 
 export const clamp = (num: number, min: number, max: number) => {
   return Math.min(Math.max(num, min), max);
@@ -49,3 +49,62 @@ export const useTweenNumber = ({
 
   return { animatedProgress };
 };
+
+export function useTrapFocus(element: Ref<HTMLElement | null>) {
+  const isLocked = ref(false);
+  let previousActiveElement = document.activeElement as HTMLElement;
+  let focusableEls = null;
+  let firstFocusableEl: HTMLElement | null = null;
+  let lastFocusableEl: HTMLElement | null = null;
+  const KEYCODE_TAB = 9;
+
+  const trap = () => {
+    isLocked.value = true;
+    previousActiveElement = document.activeElement as HTMLElement;
+
+    firstFocusableEl?.focus();
+  };
+
+  const release = () => {
+    isLocked.value = false;
+
+    previousActiveElement.focus();
+  };
+
+  const cycleFocus = (e: KeyboardEvent) => {
+    if (!isLocked.value) return;
+    var isTabPressed = e.key === "Tab" || e.keyCode === KEYCODE_TAB;
+
+    if (!isTabPressed) {
+      return;
+    }
+
+    if (e.shiftKey) {
+      /* shift + tab */
+      if (document.activeElement === firstFocusableEl) {
+        lastFocusableEl?.focus();
+        e.preventDefault();
+      }
+    } else {
+      /* tab */
+      if (document.activeElement === lastFocusableEl) {
+        firstFocusableEl?.focus();
+        e.preventDefault();
+      }
+    }
+  };
+
+  watchEffect(() => {
+    if (!element.value) return;
+
+    focusableEls = element.value.querySelectorAll(
+      'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])'
+    );
+    firstFocusableEl = focusableEls[0] as HTMLElement;
+    lastFocusableEl = focusableEls[focusableEls.length - 1] as HTMLElement;
+    element.value.addEventListener("keydown", cycleFocus);
+  });
+  onUnmounted(() => element.value?.removeEventListener("keydown", cycleFocus));
+
+  return { trap, release, isLocked };
+}

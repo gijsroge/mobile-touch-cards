@@ -33,12 +33,17 @@ const mobileCardProgress = ref(0);
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
           cum ducimus?
         </p>
+
+        <a href="#">hoi</a>
         <p class="p-3">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
           cum ducimus?
         </p>
+
+        <a href="#">hoi</a>
+
         <p class="p-3">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum

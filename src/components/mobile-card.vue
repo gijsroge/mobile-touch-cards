@@ -14,7 +14,7 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { clamp, dampen, useTweenNumber } from "..";
+import { clamp, dampen, useTrapFocus, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
 
 const props = defineProps({
@@ -65,6 +65,8 @@ const allowDrag = ref(false);
 const startY = ref(0);
 const y = ref(0);
 const isOpen = ref(false);
+
+const { trap, release } = useTrapFocus(cardRef);
 
 onMounted(() => {
   window.addEventListener("click", (event) => closeIfClickedOutside(event), {
@@ -218,13 +220,19 @@ watch(animatedProgress, () => {
   emit("progress", animatedProgress.value);
 });
 
+watch(isOpen, () => (isOpen.value ? trap() : release()));
+
 watch(y, () => {
   if (!isDragging.value) isOpen.value = y.value > props.thresHold;
 });
 
-watchEffect(() =>
-  cardRef.value ? resizeObserver?.observe(cardRef.value) : null
-);
+watchEffect(() => {
+  if (cardRef.value) {
+    resizeObserver?.observe(cardRef.value);
+  }
+});
+
+// focus lock if open
 </script>
 
 <template>
