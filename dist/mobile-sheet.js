@@ -73,7 +73,7 @@ const T = (e, s, d) => Math.min(Math.max(e, s), d), q = (e, s, d, m) => {
     h(x, () => {
       s("progress", x.value);
     }), h(v, () => {
-      v.value ? s("close") : s("open"), v.value ? l.value = u.value : l.value = 0;
+      v.value ? s("close") : s("open"), v.value ? (l.value = u.value, document.documentElement.style.setProperty("overflow", "hidden")) : (l.value = 0, document.documentElement.style.removeProperty("overflow"));
     }), H(() => {
       window.addEventListener("mouseup", () => P(), { passive: !0 }), window.addEventListener("mousemove", b, { passive: !0 });
     }), k(() => {
@@ -85,11 +85,11 @@ const T = (e, s, d) => Math.min(Math.max(e, s), d), q = (e, s, d, m) => {
     const p = (t) => {
       if (t.target instanceof Element && F(t.target, "data-ignore-drag"))
         return;
-      s("start-drag"), document.documentElement.style.setProperty("overflow", "hidden");
+      s("start-drag");
       const o = t instanceof TouchEvent ? t.touches[0].clientY : t.clientY;
       l.value = o + (v.value ? u.value : 0), f.value = !0;
     }, P = () => {
-      document.documentElement.style.removeProperty("overflow"), f.value && (v.value ? n.value < u.value - w ? n.value = 0 : n.value = u.value : n.value >= w ? n.value = u.value : n.value = 0, l.value = n.value, f.value = !1, s("stop-drag"));
+      f.value && (v.value ? n.value < u.value - w ? n.value = 0 : n.value = u.value : n.value >= w ? n.value = u.value : n.value = 0, l.value = n.value, f.value = !1, s("stop-drag"));
     }, b = (t) => {
       if (!f.value)
         return;

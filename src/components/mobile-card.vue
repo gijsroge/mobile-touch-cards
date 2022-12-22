@@ -87,8 +87,10 @@ watch(isOpen, () => {
   else emit("open");
   if (isOpen.value) {
     startYPosition.value = heightOfContent.value;
+    document.documentElement.style.setProperty("overflow", "hidden");
   } else {
     startYPosition.value = 0;
+    document.documentElement.style.removeProperty("overflow");
   }
 });
 
@@ -120,14 +122,12 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
     return;
 
   emit("start-drag");
-  document.documentElement.style.setProperty("overflow", "hidden");
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
   startYPosition.value = clientY + (isOpen.value ? heightOfContent.value : 0);
   isDragging.value = true;
 };
 
 const stopDrag = () => {
-  document.documentElement.style.removeProperty("overflow");
   if (!isDragging.value) return;
 
   // snap the card to full open or fully closed
