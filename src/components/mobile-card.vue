@@ -56,6 +56,7 @@ const emit = defineEmits([
 
 const isSsr = typeof document !== "undefined";
 const cardRef = ref<HTMLElement | null>(null);
+const innerCardRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const heightOfContent = ref(props.maxDistance);
@@ -66,7 +67,7 @@ const startY = ref(0);
 const y = ref(0);
 const isOpen = ref(false);
 
-const { trap, release } = useTrapFocus(cardRef);
+const { trap, release } = useTrapFocus(innerCardRef);
 
 onMounted(() => {
   window.addEventListener("click", (event) => closeIfClickedOutside(event), {
@@ -236,8 +237,17 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div ref="cardRef" v-bind:style="style" :class="[rootClass]" data-modal-sheet>
+  <div
+    ref="cardRef"
+    v-bind:style="style"
+    :class="[rootClass]"
+    data-modal-sheet
+    role="dialog"
+    aria-labelledby="myDialog"
+    :aria-hidden="!isOpen"
+  >
     <div
+      ref="innerCardRef"
       v-bind="$attrs"
       :style="{ marginTop: '0px !important', touchAction: 'none' }"
       @touchend="() => stopDrag()"
@@ -247,7 +257,7 @@ watchEffect(() => {
         (event) => (dragEntireCard ? startDrag(event) : null)
       "
     >
-      <div
+      <button
         ref="handleRef"
         @click="toggle"
         @mousedown="(event) => (!dragEntireCard ? startDrag(event) : null)"
@@ -271,7 +281,7 @@ watchEffect(() => {
             v-html="handleAsset"
           ></div>
         </slot>
-      </div>
+      </button>
       <slot></slot>
     </div>
   </div>
