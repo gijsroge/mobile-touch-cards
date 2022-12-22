@@ -6,13 +6,13 @@ export default {
 
 <script lang="ts" setup>
 import {
-  computed,
-  CSSProperties,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch,
-  watchEffect,
+computed,
+CSSProperties,
+onMounted,
+onUnmounted,
+ref,
+watch,
+watchEffect
 } from "vue";
 import { clamp, findAscendingAttribute, soften, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
@@ -40,7 +40,6 @@ const props = defineProps({
   },
 });
 const isSsr = typeof document !== "undefined";
-let animationFrame: number = 0;
 
 const emit = defineEmits([
   "progress",
@@ -50,7 +49,6 @@ const emit = defineEmits([
   "start-drag",
   "stop-drag",
 ]);
-const handleHeight = ref(50);
 const cardRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
@@ -58,8 +56,10 @@ const isOpen = ref(false);
 const startYPosition = ref(0);
 const y = ref(0);
 const heightOfContent = ref(props.maxDistance);
-const treshHold = 50;
+const thresHold = 50;
+const handleHeight = ref(50);
 const firstRender = ref(true);
+const pixelsMoved = ref(0);
 const progress = computed(() => {
   return clamp(y.value / heightOfContent.value, 0, 1);
 });
@@ -67,7 +67,7 @@ const progress = computed(() => {
 // when fully open or closed, update the isOpen value
 watch(y, () => {
   if (!isDragging.value) {
-    isOpen.value = y.value > treshHold;
+    isOpen.value = y.value > thresHold;
   }
 });
 
@@ -112,6 +112,12 @@ const open = () => {
   y.value = heightOfContent.value;
 };
 
+const toggle = () => {
+  if(isDragging.value) return;
+  if(isOpen.value) close();
+  else open()
+};
+
 const startDrag = (e: MouseEvent | TouchEvent) => {
   // if the user clicked on an element with the data-ignore-drag attribute,
   // don't start dragging, useful for scrollable content
@@ -120,11 +126,12 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
     findAscendingAttribute(e.target, "data-ignore-drag")
   )
     return;
-
-  emit("start-drag");
-  const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-  startYPosition.value = clientY + (isOpen.value ? heightOfContent.value : 0);
-  isDragging.value = true;
+    pixelsMoved.value = 0
+    const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+    startYPosition.value = clientY + (isOpen.value ? heightOfContent.value : 0);
+    isDragging.value = true;
+    emit("start-drag");
+  console.log('start drag')
 };
 
 const stopDrag = () => {
@@ -132,13 +139,13 @@ const stopDrag = () => {
 
   // snap the card to full open or fully closed
   if (isOpen.value) {
-    if (y.value < heightOfContent.value - treshHold) {
+    if (y.value < heightOfContent.value - thresHold) {
       y.value = 0;
     } else {
       y.value = heightOfContent.value;
     }
   } else {
-    if (y.value >= treshHold) {
+    if (y.value >= thresHold) {
       y.value = heightOfContent.value;
     } else {
       y.value = 0;
@@ -148,6 +155,7 @@ const stopDrag = () => {
   startYPosition.value = y.value;
   isDragging.value = false;
   emit("stop-drag");
+  console.log('stop drag')
 };
 
 const whileDrag = (e: MouseEvent | TouchEvent) => {
@@ -155,12 +163,17 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
 
   emit("drag");
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+  
+  // calculate the distance the user has dragged
+  pixelsMoved.value = startYPosition.value - clientY;
+  console.log('pixelsMoved', pixelsMoved.value)
   y.value = soften(
     startYPosition.value - clientY,
     0,
     heightOfContent.value,
     heightOfContent.value
   );
+  console.log('while drag')
 };
 
 const style = computed(() => {
