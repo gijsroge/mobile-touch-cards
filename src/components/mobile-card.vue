@@ -14,7 +14,7 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { clamp, useTweenNumber } from "..";
+import { clamp, dampen, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
 
 const props = defineProps({
@@ -62,21 +62,47 @@ const heightOfContent = ref(props.maxDistance);
 const handleHeight = ref(props.handleHeight);
 const firstRender = ref(true);
 const allowDrag = ref(false);
+const startY = ref(0);
+const y = ref(0);
+const isOpen = ref(false);
 
 onMounted(() => {
+  window.addEventListener("click", (event) => closeIfClickedOutside(event), {
+    passive: true,
+  });
   window.addEventListener("mouseup", () => stopDrag(), { passive: true });
   window.addEventListener("mousemove", whileDrag, { passive: true });
 });
 onUnmounted(() => {
-  window.removeEventListener("click", () => {});
   window.removeEventListener("mousemove", () => {});
   window.removeEventListener("mouseup", () => {});
 });
 
-// refs to drag the card
-const startY = ref(0);
-const y = ref(0);
-const dragDistance = ref(0);
+const open = () => {
+  if (isDragging.value) return;
+  y.value = heightOfContent.value;
+  emit("open");
+};
+
+const close = () => {
+  if (isDragging.value) return;
+  y.value = 0;
+  emit("close");
+};
+
+const toggle = () => {
+  if (isOpen.value) {
+    close();
+  } else {
+    open();
+  }
+};
+
+const closeIfClickedOutside = (event: MouseEvent) => {
+  if (!cardRef.value) return;
+  if (cardRef.value.contains(event.target as Node)) return;
+  close();
+};
 
 const startDrag = (e: MouseEvent | TouchEvent) => {
   // if the user clicked on an element with the data-ignore-drag attribute,
@@ -90,23 +116,51 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
   // get Y position of the mouse or touch
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
 
-  // keep track of where the user started dragging
+  // keep track of where the user started dragging and where the last drag position was
   startY.value = clientY + y.value;
 
   emit("start-drag");
-  console.log("start drag");
 };
 
+let startDragPosition = 0;
+const startedDragging = ref(false);
 const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!allowDrag.value) return;
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
 
+  // keep track of how many pixels has been dragged
+  if (!startedDragging.value) startDragPosition = clientY;
+  startedDragging.value = true;
+  const draggedPixels = Math.abs(startDragPosition - clientY);
+  if (draggedPixels > 2) isDragging.value = true;
+
   // calculate the distance the user has dragged
-  y.value = startY.value - clientY;
+  y.value = dampen(startY.value - clientY, 0, heightOfContent.value);
+  emit("drag", y.value);
 };
 
-const stopDrag = () => {
+const stopDrag = async () => {
+  await new Promise((r) => setTimeout(r, 10));
   allowDrag.value = false;
+  isDragging.value = false;
+  startedDragging.value = false;
+
+  //snap the card to full open or fully closed
+  if (isOpen.value) {
+    if (y.value < heightOfContent.value - props.thresHold) {
+      y.value = 0;
+    } else {
+      y.value = heightOfContent.value;
+    }
+  } else {
+    if (y.value >= props.thresHold) {
+      y.value = heightOfContent.value;
+    } else {
+      y.value = 0;
+    }
+  }
+
+  emit("stop-drag");
 };
 
 const style = computed(() => {
@@ -155,10 +209,6 @@ const progress = computed(() => {
   return clamp(y.value / heightOfContent.value, 0, 1);
 });
 
-const isOpen = computed(() => {
-  return progress.value === 1;
-});
-
 const { animatedProgress } = useTweenNumber({
   progress: progress,
   duration: 250,
@@ -166,6 +216,10 @@ const { animatedProgress } = useTweenNumber({
 
 watch(animatedProgress, () => {
   emit("progress", animatedProgress.value);
+});
+
+watch(y, () => {
+  if (!isDragging.value) isOpen.value = y.value > props.thresHold;
 });
 
 watchEffect(() =>
@@ -185,9 +239,9 @@ watchEffect(() =>
         (event) => (dragEntireCard ? startDrag(event) : null)
       "
     >
-      {{ isDragging }}
       <div
         ref="handleRef"
+        @click="toggle"
         @mousedown="(event) => (!dragEntireCard ? startDrag(event) : null)"
         @touchstart.passive="
           (event) => (!dragEntireCard ? startDrag(event) : null)

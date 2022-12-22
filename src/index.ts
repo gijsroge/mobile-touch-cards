@@ -4,15 +4,10 @@ export const clamp = (num: number, min: number, max: number) => {
   return Math.min(Math.max(num, min), max);
 };
 
-export const dampen = (
-  num: number,
-  min: number,
-  max: number,
-  heightOfContent: number
-) => {
+export const dampen = (num: number, min: number, max: number) => {
   let position = num;
   if (num > max) {
-    const rest = position - heightOfContent;
+    const rest = position - max;
     position -= rest * 0.6;
   }
   if (num < min) {
@@ -49,7 +44,7 @@ export const useTweenNumber = ({
   };
 
   onUnmounted(() => {
-    if(rafId.value) cancelAnimationFrame(rafId.value);
+    if (rafId.value) cancelAnimationFrame(rafId.value);
   });
 
   return { animatedProgress };
