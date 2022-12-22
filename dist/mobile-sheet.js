@@ -1,57 +1,57 @@
-import { ref as i, watch as y, onUnmounted as k, watchEffect as B, defineComponent as j, onMounted as Y, computed as R, openBlock as F, createElementBlock as U, normalizeStyle as V, unref as S, normalizeClass as G, createElementVNode as T, mergeProps as J, renderSlot as A } from "vue";
-const b = (t, s, a) => Math.min(Math.max(t, s), a), Q = (t, s, a) => {
-  let l = t;
+import { ref as i, watch as y, onUnmounted as k, watchEffect as B, defineComponent as j, onMounted as Y, computed as R, openBlock as F, createElementBlock as U, normalizeStyle as V, unref as S, normalizeClass as G, createElementVNode as E, mergeProps as J, renderSlot as A } from "vue";
+const T = (t, l, a) => Math.min(Math.max(t, l), a), Q = (t, l, a) => {
+  let s = t;
   if (t > a) {
-    const n = l - a;
-    l -= n * 0.6;
+    const n = s - a;
+    s -= n * 0.6;
   }
-  return t < s && (l -= l * 0.6), l;
+  return t < l && (s -= s * 0.6), s;
 }, W = ({
   progress: t,
-  duration: s
+  duration: l
 }) => {
-  const a = i(t.value), l = i(null);
+  const a = i(t.value), s = i(null);
   y(t, (d, g) => n(g, d));
   const n = (d, g) => {
     const v = performance.now(), c = (r) => r * (2 - r), m = () => {
-      const r = performance.now() - v, p = b(r / s, 0, 1);
-      a.value = c(p) * (g - d) + d, p < 1 && (l.value = requestAnimationFrame(m));
+      const r = performance.now() - v, p = T(r / l, 0, 1);
+      a.value = c(p) * (g - d) + d, p < 1 && (s.value = requestAnimationFrame(m));
     };
-    l.value = requestAnimationFrame(m);
+    s.value = requestAnimationFrame(m);
   };
   return k(() => {
-    l.value && cancelAnimationFrame(l.value);
+    s.value && cancelAnimationFrame(s.value);
   }), { animatedProgress: a };
 };
 function X(t) {
-  const s = i(!1);
-  let a = null, l = null, n = null, d = null;
+  const l = i(!1);
+  let a = null, s = null, n = null, d = null;
   const g = 9, v = () => {
-    s.value = !0, a = document.activeElement, n == null || n.focus();
+    l.value = !0, a = document.activeElement, n == null || n.focus();
   }, c = () => {
-    s.value = !1, a == null || a.focus();
+    l.value = !1, a == null || a.focus();
   }, m = (r) => {
-    if (s.value) {
+    if (l.value) {
       var p = r.key === "Tab" || r.keyCode === g;
       p && (r.shiftKey ? document.activeElement === n && (d == null || d.focus(), r.preventDefault()) : document.activeElement === d && (n == null || n.focus(), r.preventDefault()));
     }
   };
   return B(() => {
-    t.value && (console.log(t.value), l = t.value.querySelectorAll(
+    t.value && (console.log(t.value), s = t.value.querySelectorAll(
       'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])'
-    ), n = l[0], d = l[l.length - 1], t.value.addEventListener("keydown", m));
+    ), n = s[0], d = s[s.length - 1], t.value.addEventListener("keydown", m));
   }), k(() => {
     var r;
     return (r = t.value) == null ? void 0 : r.removeEventListener("keydown", m);
-  }), { trap: v, release: c, isLocked: s };
+  }), { trap: v, release: c, isLocked: l };
 }
 const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.org/2000/svg">
 <rect width="70" height="3" rx="3" fill="currentColor"/>
 </svg>
-`, _ = ["innerHTML"], ee = {
+`, _ = ["aria-hidden"], ee = ["innerHTML"], te = {
   inheritAttrs: !1
-}, ne = /* @__PURE__ */ j({
-  ...ee,
+}, ae = /* @__PURE__ */ j({
+  ...te,
   __name: "mobile-card",
   props: {
     rootClass: {
@@ -87,8 +87,8 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
     "start-drag",
     "stop-drag"
   ],
-  setup(t, { emit: s }) {
-    const a = t, l = typeof document < "u", n = i(null), d = i(null), g = i(null), v = i(!1), c = i(a.maxDistance), m = i(a.handleHeight), r = i(!0), p = i(!1), x = i(0), u = i(0), h = i(!1), { trap: N, release: z } = X(d);
+  setup(t, { emit: l }) {
+    const a = t, s = typeof document < "u", n = i(null), d = i(null), g = i(null), v = i(!1), c = i(a.maxDistance), m = i(a.handleHeight), r = i(!0), p = i(!1), x = i(0), u = i(0), h = i(!1), { trap: N, release: z } = X(d);
     Y(() => {
       window.addEventListener("click", (e) => q(e), {
         passive: !0
@@ -99,9 +99,9 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
       });
     });
     const O = () => {
-      v.value || (u.value = c.value, s("open"));
+      v.value || (u.value = c.value, l("open"));
     }, H = () => {
-      v.value || (u.value = 0, s("close"));
+      v.value || (u.value = 0, l("close"));
     }, $ = () => {
       h.value ? H() : O();
     }, q = (e) => {
@@ -111,16 +111,16 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
         return;
       p.value = !0;
       const o = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      x.value = o + u.value, s("start-drag");
+      x.value = o + u.value, l("start-drag");
     };
     let D = 0;
-    const C = i(!1), L = (e) => {
+    const b = i(!1), L = (e) => {
       if (!p.value)
         return;
       const o = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      C.value || (D = o), C.value = !0, Math.abs(D - o) > 2 && (v.value = !0), u.value = Q(x.value - o, 0, c.value), s("drag", u.value);
+      b.value || (D = o), b.value = !0, Math.abs(D - o) > 2 && (v.value = !0), u.value = Q(x.value - o, 0, c.value), l("drag", u.value);
     }, P = async () => {
-      await new Promise((e) => setTimeout(e, 10)), p.value = !1, v.value = !1, C.value = !1, h.value ? u.value < c.value - a.thresHold ? u.value = 0 : u.value = c.value : u.value >= a.thresHold ? u.value = c.value : u.value = 0, s("stop-drag");
+      await new Promise((e) => setTimeout(e, 10)), p.value = !1, v.value = !1, b.value = !1, h.value ? u.value < c.value - a.thresHold ? u.value = 0 : u.value = c.value : u.value >= a.thresHold ? u.value = c.value : u.value = 0, l("stop-drag");
     }, I = R(() => {
       const e = {
         position: "fixed",
@@ -130,33 +130,36 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
         transition: v.value || r.value ? "none" : "transform 0.2s ease-out"
       };
       return e.top = "100%", e.transform = `translateY(${(u.value + m.value) * -1}px)`, e;
-    }), E = l ? new ResizeObserver((e) => {
+    }), C = s ? new ResizeObserver((e) => {
       if (!n.value)
         return;
       const { blockSize: o } = e[0].borderBoxSize[0], f = window.innerHeight;
-      g.value && (m.value = g.value.clientHeight), c.value = b(o, 0, f) - m.value, r.value && a.open && (u.value = c.value);
+      g.value && (m.value = g.value.clientHeight), c.value = T(o, 0, f) - m.value, r.value && a.open && (u.value = c.value);
     }) : null;
     Y(() => {
       setTimeout(() => r.value = !1, 1);
     });
-    const K = R(() => b(u.value / c.value, 0, 1)), { animatedProgress: M } = W({
+    const K = R(() => T(u.value / c.value, 0, 1)), { animatedProgress: M } = W({
       progress: K,
       duration: 250
     });
     return y(M, () => {
-      s("progress", M.value);
+      l("progress", M.value);
     }), y(h, () => h.value ? N() : z()), y(u, () => {
       v.value || (h.value = u.value > a.thresHold);
     }), B(() => {
-      n.value && (E == null || E.observe(n.value));
+      n.value && (C == null || C.observe(n.value));
     }), (e, o) => (F(), U("div", {
       ref_key: "cardRef",
       ref: n,
       style: V(S(I)),
       class: G([t.rootClass]),
-      "data-modal-sheet": ""
+      "data-modal-sheet": "",
+      role: "dialog",
+      "aria-labelledby": "myDialog",
+      "aria-hidden": !h.value
     }, [
-      T("div", J({
+      E("div", J({
         ref_key: "innerCardRef",
         ref: d
       }, e.$attrs, {
@@ -166,7 +169,7 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
         onMousedown: o[3] || (o[3] = (f) => t.dragEntireCard ? w(f) : null),
         onTouchstartPassive: o[4] || (o[4] = (f) => t.dragEntireCard ? w(f) : null)
       }), [
-        T("div", {
+        E("button", {
           ref_key: "handleRef",
           ref: g,
           onClick: $,
@@ -174,7 +177,7 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
           onTouchstartPassive: o[1] || (o[1] = (f) => t.dragEntireCard ? null : w(f))
         }, [
           A(e.$slots, "handle", {}, () => [
-            T("div", {
+            E("div", {
               style: {
                 userSelect: "none",
                 cursor: "move",
@@ -187,14 +190,14 @@ const Z = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
                 justifyContent: "center"
               },
               innerHTML: S(Z)
-            }, null, 8, _)
+            }, null, 8, ee)
           ])
         ], 544),
         A(e.$slots, "default")
       ], 16)
-    ], 6));
+    ], 14, _));
   }
 });
 export {
-  ne as default
+  ae as default
 };
