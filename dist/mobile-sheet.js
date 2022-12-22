@@ -1,37 +1,37 @@
-import { ref as d, watch as y, onUnmounted as x, watchEffect as B, defineComponent as K, onMounted as A, computed as M, openBlock as j, createElementBlock as F, normalizeStyle as U, unref as Y, normalizeClass as V, createElementVNode as b, mergeProps as G, renderSlot as S } from "vue";
-const C = (n, o, s) => Math.min(Math.max(n, o), s), J = (n, o, s) => {
+import { ref as d, watch as y, onUnmounted as x, watchEffect as B, defineComponent as K, onMounted as M, computed as Y, openBlock as j, createElementBlock as F, normalizeStyle as U, unref as S, normalizeClass as V, createElementVNode as b, mergeProps as G, renderSlot as A } from "vue";
+const C = (n, s, a) => Math.min(Math.max(n, s), a), J = (n, s, a) => {
   let l = n;
-  if (n > s) {
-    const t = l - s;
+  if (n > a) {
+    const t = l - a;
     l -= t * 0.6;
   }
-  return n < o && (l -= l * 0.6), l;
+  return n < s && (l -= l * 0.6), l;
 }, Q = ({
   progress: n,
-  duration: o
+  duration: s
 }) => {
-  const s = d(n.value), l = d(null);
+  const a = d(n.value), l = d(null);
   y(n, (i, c) => t(c, i));
   const t = (i, c) => {
     const v = performance.now(), m = (r) => r * (2 - r), g = () => {
-      const r = performance.now() - v, p = C(r / o, 0, 1);
-      s.value = m(p) * (c - i) + i, p < 1 && (l.value = requestAnimationFrame(g));
+      const r = performance.now() - v, p = C(r / s, 0, 1);
+      a.value = m(p) * (c - i) + i, p < 1 && (l.value = requestAnimationFrame(g));
     };
     l.value = requestAnimationFrame(g);
   };
   return x(() => {
     l.value && cancelAnimationFrame(l.value);
-  }), { animatedProgress: s };
+  }), { animatedProgress: a };
 };
 function W(n) {
-  const o = d(!1);
-  let s = document.activeElement, l = null, t = null, i = null;
+  const s = d(!1);
+  let a = null, l = null, t = null, i = null;
   const c = 9, v = () => {
-    o.value = !0, s = document.activeElement, t == null || t.focus();
+    s.value = !0, a = document.activeElement, t == null || t.focus();
   }, m = () => {
-    o.value = !1, s.focus();
+    s.value = !1, a == null || a.focus();
   }, g = (r) => {
-    if (o.value) {
+    if (s.value) {
       var p = r.key === "Tab" || r.keyCode === c;
       p && (r.shiftKey ? document.activeElement === t && (i == null || i.focus(), r.preventDefault()) : document.activeElement === i && (t == null || t.focus(), r.preventDefault()));
     }
@@ -43,7 +43,7 @@ function W(n) {
   }), x(() => {
     var r;
     return (r = n.value) == null ? void 0 : r.removeEventListener("keydown", g);
-  }), { trap: v, release: m, isLocked: o };
+  }), { trap: v, release: m, isLocked: s };
 }
 const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.org/2000/svg">
 <rect width="70" height="3" rx="3" fill="currentColor"/>
@@ -87,9 +87,9 @@ const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
     "start-drag",
     "stop-drag"
   ],
-  setup(n, { emit: o }) {
-    const s = n, l = typeof document < "u", t = d(null), i = d(null), c = d(!1), v = d(s.maxDistance), m = d(s.handleHeight), g = d(!0), r = d(!1), p = d(0), u = d(0), h = d(!1), { trap: R, release: N } = W(t);
-    A(() => {
+  setup(n, { emit: s }) {
+    const a = n, l = typeof document < "u", t = d(null), i = d(null), c = d(!1), v = d(a.maxDistance), m = d(a.handleHeight), g = d(!0), r = d(!1), p = d(0), u = d(0), h = d(!1), { trap: R, release: N } = W(t);
+    M(() => {
       window.addEventListener("click", (e) => $(e), {
         passive: !0
       }), window.addEventListener("mouseup", () => L(), { passive: !0 }), window.addEventListener("mousemove", D, { passive: !0 });
@@ -99,9 +99,9 @@ const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
       });
     });
     const z = () => {
-      c.value || (u.value = v.value, o("open"));
+      c.value || (u.value = v.value, s("open"));
     }, k = () => {
-      c.value || (u.value = 0, o("close"));
+      c.value || (u.value = 0, s("close"));
     }, O = () => {
       h.value ? k() : z();
     }, $ = (e) => {
@@ -110,18 +110,18 @@ const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
       if (e.target instanceof HTMLElement && e.target.closest("[data-ignore-drag]"))
         return;
       r.value = !0;
-      const a = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      p.value = a + u.value, o("start-drag");
+      const o = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+      p.value = o + u.value, s("start-drag");
     };
     let H = 0;
     const E = d(!1), D = (e) => {
       if (!r.value)
         return;
-      const a = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      E.value || (H = a), E.value = !0, Math.abs(H - a) > 2 && (c.value = !0), u.value = J(p.value - a, 0, v.value), o("drag", u.value);
+      const o = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+      E.value || (H = o), E.value = !0, Math.abs(H - o) > 2 && (c.value = !0), u.value = J(p.value - o, 0, v.value), s("drag", u.value);
     }, L = async () => {
-      await new Promise((e) => setTimeout(e, 10)), r.value = !1, c.value = !1, E.value = !1, h.value ? u.value < v.value - s.thresHold ? u.value = 0 : u.value = v.value : u.value >= s.thresHold ? u.value = v.value : u.value = 0, o("stop-drag");
-    }, q = M(() => {
+      await new Promise((e) => setTimeout(e, 10)), r.value = !1, c.value = !1, E.value = !1, h.value ? u.value < v.value - a.thresHold ? u.value = 0 : u.value = v.value : u.value >= a.thresHold ? u.value = v.value : u.value = 0, s("stop-drag");
+    }, q = Y(() => {
       const e = {
         position: "fixed",
         willChange: "transform",
@@ -133,44 +133,44 @@ const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
     }), T = l ? new ResizeObserver((e) => {
       if (!t.value)
         return;
-      const { blockSize: a } = e[0].borderBoxSize[0], f = window.innerHeight;
-      i.value && (m.value = i.value.clientHeight), v.value = C(a, 0, f) - m.value, g.value && s.open && (u.value = v.value);
+      const { blockSize: o } = e[0].borderBoxSize[0], f = window.innerHeight;
+      i.value && (m.value = i.value.clientHeight), v.value = C(o, 0, f) - m.value, g.value && a.open && (u.value = v.value);
     }) : null;
-    A(() => {
+    M(() => {
       setTimeout(() => g.value = !1, 1);
     });
-    const I = M(() => C(u.value / v.value, 0, 1)), { animatedProgress: P } = Q({
+    const I = Y(() => C(u.value / v.value, 0, 1)), { animatedProgress: P } = Q({
       progress: I,
       duration: 250
     });
     return y(P, () => {
-      o("progress", P.value);
+      s("progress", P.value);
     }), y(h, () => h.value ? R() : N()), y(u, () => {
-      c.value || (h.value = u.value > s.thresHold);
+      c.value || (h.value = u.value > a.thresHold);
     }), B(() => {
       t.value && (T == null || T.observe(t.value));
-    }), (e, a) => (j(), F("div", {
+    }), (e, o) => (j(), F("div", {
       ref_key: "cardRef",
       ref: t,
-      style: U(Y(q)),
+      style: U(S(q)),
       class: V([n.rootClass]),
       "data-modal-sheet": ""
     }, [
       b("div", G(e.$attrs, {
         style: { marginTop: "0px !important", touchAction: "none" },
-        onTouchend: a[2] || (a[2] = () => L()),
+        onTouchend: o[2] || (o[2] = () => L()),
         onTouchmovePassive: D,
-        onMousedown: a[3] || (a[3] = (f) => n.dragEntireCard ? w(f) : null),
-        onTouchstartPassive: a[4] || (a[4] = (f) => n.dragEntireCard ? w(f) : null)
+        onMousedown: o[3] || (o[3] = (f) => n.dragEntireCard ? w(f) : null),
+        onTouchstartPassive: o[4] || (o[4] = (f) => n.dragEntireCard ? w(f) : null)
       }), [
         b("div", {
           ref_key: "handleRef",
           ref: i,
           onClick: O,
-          onMousedown: a[0] || (a[0] = (f) => n.dragEntireCard ? null : w(f)),
-          onTouchstartPassive: a[1] || (a[1] = (f) => n.dragEntireCard ? null : w(f))
+          onMousedown: o[0] || (o[0] = (f) => n.dragEntireCard ? null : w(f)),
+          onTouchstartPassive: o[1] || (o[1] = (f) => n.dragEntireCard ? null : w(f))
         }, [
-          S(e.$slots, "handle", {}, () => [
+          A(e.$slots, "handle", {}, () => [
             b("div", {
               style: {
                 userSelect: "none",
@@ -183,11 +183,11 @@ const X = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.or
                 alignItems: "center",
                 justifyContent: "center"
               },
-              innerHTML: Y(X)
+              innerHTML: S(X)
             }, null, 8, Z)
           ])
         ], 544),
-        S(e.$slots, "default")
+        A(e.$slots, "default")
       ], 16)
     ], 6));
   }

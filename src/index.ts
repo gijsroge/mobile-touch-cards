@@ -52,7 +52,7 @@ export const useTweenNumber = ({
 
 export function useTrapFocus(element: Ref<HTMLElement | null>) {
   const isLocked = ref(false);
-  let previousActiveElement = document.activeElement as HTMLElement;
+  let previousActiveElement: HTMLElement | null = null;
   let focusableEls = null;
   let firstFocusableEl: HTMLElement | null = null;
   let lastFocusableEl: HTMLElement | null = null;
@@ -68,7 +68,7 @@ export function useTrapFocus(element: Ref<HTMLElement | null>) {
   const release = () => {
     isLocked.value = false;
 
-    previousActiveElement.focus();
+    previousActiveElement?.focus();
   };
 
   const cycleFocus = (e: KeyboardEvent) => {
