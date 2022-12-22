@@ -1,10 +1,10 @@
-import { ref, Ref, watch } from "vue";
+import { onUnmounted, ref, Ref, watch } from "vue";
 
 export const clamp = (num: number, min: number, max: number) => {
   return Math.min(Math.max(num, min), max);
 };
 
-export const soften = (
+export const dampen = (
   num: number,
   min: number,
   max: number,
@@ -22,28 +22,6 @@ export const soften = (
   return position;
 };
 
-export const findAscendingAttribute = (
-  el: Node | HTMLElement,
-  attribute: string
-) => {
-  while (el.parentNode) {
-    el = el.parentNode;
-    return (el as HTMLElement).hasAttribute(attribute) ? el : null;
-  }
-};
-
-export const isChildOf = ({
-  parent,
-  child,
-}: {
-  parent: Element;
-  child: Element | string | null;
-}) => {
-  if (typeof child === "string") child = parent.querySelector(child);
-  if (!child) return false;
-  return parent.contains(child);
-};
-
 export const useTweenNumber = ({
   progress,
   duration,
@@ -52,6 +30,7 @@ export const useTweenNumber = ({
   duration: number;
 }) => {
   const animatedProgress = ref(progress.value);
+  const rafId = ref<number | null>(null);
   watch(progress, (newValue, oldValue) => tween(oldValue, newValue));
 
   const tween = (start: number, end: number) => {
@@ -63,11 +42,15 @@ export const useTweenNumber = ({
       const t = clamp(time / duration, 0, 1);
       animatedProgress.value = ease(t) * (end - start) + start;
       if (t < 1) {
-        requestAnimationFrame(update);
+        rafId.value = requestAnimationFrame(update);
       }
     };
-    requestAnimationFrame(update);
+    rafId.value = requestAnimationFrame(update);
   };
+
+  onUnmounted(() => {
+    if(rafId.value) cancelAnimationFrame(rafId.value);
+  });
 
   return { animatedProgress };
 };

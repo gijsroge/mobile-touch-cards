@@ -6,15 +6,15 @@ export default {
 
 <script lang="ts" setup>
 import {
-computed,
-CSSProperties,
-onMounted,
-onUnmounted,
-ref,
-watch,
-watchEffect
+  computed,
+  CSSProperties,
+  onMounted,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
 } from "vue";
-import { clamp, findAscendingAttribute, soften, useTweenNumber } from "..";
+import { clamp, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
 
 const props = defineProps({
@@ -26,7 +26,7 @@ const props = defineProps({
     type: Number,
     default: null,
   },
-  isOpen: {
+  open: {
     type: Boolean,
     default: false,
   },
@@ -34,12 +34,16 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  autoClose: {
-    type: Boolean,
-    default: true,
+  thresHold: {
+    type: Number,
+    default: 50,
+  },
+  // for ssr
+  handleHeight: {
+    type: Number,
+    default: 50,
   },
 });
-const isSsr = typeof document !== "undefined";
 
 const emit = defineEmits([
   "progress",
@@ -49,50 +53,15 @@ const emit = defineEmits([
   "start-drag",
   "stop-drag",
 ]);
+
+const isSsr = typeof document !== "undefined";
 const cardRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
-const isOpen = ref(false);
-const startYPosition = ref(0);
-const y = ref(0);
 const heightOfContent = ref(props.maxDistance);
-const thresHold = 50;
-const handleHeight = ref(50);
+const handleHeight = ref(props.handleHeight);
 const firstRender = ref(true);
-const pixelsMoved = ref(0);
-const progress = computed(() => {
-  return clamp(y.value / heightOfContent.value, 0, 1);
-});
-
-// when fully open or closed, update the isOpen value
-watch(y, () => {
-  if (!isDragging.value) {
-    isOpen.value = y.value > thresHold;
-  }
-});
-
-const { animatedProgress } = useTweenNumber({
-  progress: progress,
-  duration: 250,
-});
-
-// emit progress so parent can listen to it
-watch(animatedProgress, () => {
-  // tween between newValue and oldValue using requestAnimationFrame
-  emit("progress", animatedProgress.value);
-});
-
-watch(isOpen, () => {
-  if (isOpen.value) emit("close");
-  else emit("open");
-  if (isOpen.value) {
-    startYPosition.value = heightOfContent.value;
-    document.documentElement.style.setProperty("overflow", "hidden");
-  } else {
-    startYPosition.value = 0;
-    document.documentElement.style.removeProperty("overflow");
-  }
-});
+const allowDrag = ref(false);
 
 onMounted(() => {
   window.addEventListener("mouseup", () => stopDrag(), { passive: true });
@@ -104,76 +73,40 @@ onUnmounted(() => {
   window.removeEventListener("mouseup", () => {});
 });
 
-const close = () => {
-  y.value = 0;
-};
-
-const open = () => {
-  y.value = heightOfContent.value;
-};
-
-const toggle = () => {
-  if(isDragging.value) return;
-  if(isOpen.value) close();
-  else open()
-};
+// refs to drag the card
+const startY = ref(0);
+const y = ref(0);
+const dragDistance = ref(0);
 
 const startDrag = (e: MouseEvent | TouchEvent) => {
   // if the user clicked on an element with the data-ignore-drag attribute,
   // don't start dragging, useful for scrollable content
-  if (
-    e.target instanceof Element &&
-    findAscendingAttribute(e.target, "data-ignore-drag")
-  )
+  if (e.target instanceof HTMLElement && e.target.closest("[data-ignore-drag]"))
     return;
-    pixelsMoved.value = 0
-    const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-    startYPosition.value = clientY + (isOpen.value ? heightOfContent.value : 0);
-    isDragging.value = true;
-    emit("start-drag");
-  console.log('start drag')
-};
 
-const stopDrag = () => {
-  if (!isDragging.value) return;
+  // allow dragging
+  allowDrag.value = true;
 
-  // snap the card to full open or fully closed
-  if (isOpen.value) {
-    if (y.value < heightOfContent.value - thresHold) {
-      y.value = 0;
-    } else {
-      y.value = heightOfContent.value;
-    }
-  } else {
-    if (y.value >= thresHold) {
-      y.value = heightOfContent.value;
-    } else {
-      y.value = 0;
-    }
-  }
+  // get Y position of the mouse or touch
+  const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
 
-  startYPosition.value = y.value;
-  isDragging.value = false;
-  emit("stop-drag");
-  console.log('stop drag')
+  // keep track of where the user started dragging
+  startY.value = clientY + y.value;
+
+  emit("start-drag");
+  console.log("start drag");
 };
 
 const whileDrag = (e: MouseEvent | TouchEvent) => {
-  if (!isDragging.value) return;
-
-  emit("drag");
+  if (!allowDrag.value) return;
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-  
+
   // calculate the distance the user has dragged
-  pixelsMoved.value = startYPosition.value - clientY;
-  console.log('pixelsMoved', pixelsMoved.value)
-  y.value = soften(
-    startYPosition.value - clientY,
-    0,
-    heightOfContent.value,
-    heightOfContent.value
-  );
-  console.log('while drag')
+  y.value = startY.value - clientY;
+};
+
+const stopDrag = () => {
+  allowDrag.value = false;
 };
 
 const style = computed(() => {
@@ -208,18 +141,36 @@ const resizeObserver = isSsr
         clamp(contentHeight, 0, viewportHeight) - handleHeight.value;
       // on the first render, if the card is open, set the y value to the height of the content,
       // this is to prevent the card from jumping open on the first render
-      if (firstRender.value && props.isOpen) {
+      if (firstRender.value && props.open) {
         y.value = heightOfContent.value;
       }
     })
   : null;
-watchEffect(() =>
-  cardRef.value ? resizeObserver?.observe(cardRef.value) : null
-);
 
 onMounted(() => {
   setTimeout(() => (firstRender.value = false), 1);
 });
+
+const progress = computed(() => {
+  return clamp(y.value / heightOfContent.value, 0, 1);
+});
+
+const isOpen = computed(() => {
+  return progress.value === 1;
+});
+
+const { animatedProgress } = useTweenNumber({
+  progress: progress,
+  duration: 250,
+});
+
+watch(animatedProgress, () => {
+  emit("progress", animatedProgress.value);
+});
+
+watchEffect(() =>
+  cardRef.value ? resizeObserver?.observe(cardRef.value) : null
+);
 </script>
 
 <template>
@@ -234,6 +185,7 @@ onMounted(() => {
         (event) => (dragEntireCard ? startDrag(event) : null)
       "
     >
+      {{ isDragging }}
       <div
         ref="handleRef"
         @mousedown="(event) => (!dragEntireCard ? startDrag(event) : null)"
