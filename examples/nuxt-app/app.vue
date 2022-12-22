@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import MobileSheet from "../../dist/mobile-sheet";
+import MobileSheet from "./mobile-sheet/mobile-sheet";
 
 const MobileSheetProgress = ref(0);
 </script>
