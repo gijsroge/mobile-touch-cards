@@ -72,9 +72,16 @@ const handleHeight = ref(props.handleHeight);
 const firstRender = ref(true);
 const allowDrag = ref(false);
 const startY = ref(0);
+const prevY = ref(0);
 const y = ref(0);
 const isOpen = ref(false);
 const lockScroll = ref(false);
+const startTime = ref(0);
+const endTime = ref(0);
+const distance = ref(0);
+const velocity = ref(1);
+const dragDirection = ref("up");
+const previousDirection = ref("up");
 
 const { trap, release } = useTrapFocus(innerCardRef);
 
@@ -120,11 +127,18 @@ const closeIfClickedOutside = (event: MouseEvent) => {
   close();
 };
 
+const startVelocityCalculation = () => {
+  startTime.value = new Date().getTime();
+};
+
 const startDrag = (e: MouseEvent | TouchEvent) => {
   // if the user clicked on an element with the data-ignore-drag attribute,
   // don't start dragging, useful for scrollable content
   if (e.target instanceof HTMLElement && e.target.closest("[data-ignore-drag]"))
     return;
+
+  // reset velocity
+  velocity.value = 1;
 
   // allow dragging
   allowDrag.value = true;
@@ -134,6 +148,9 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
 
   // keep track of where the user started dragging and where the last drag position was
   startY.value = clientY + y.value;
+
+  // keep track of the time the user started dragging
+  startVelocityCalculation();
 
   emit("start-drag");
 };
@@ -147,9 +164,17 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   // keep track of how many pixels has been dragged
   if (!startedDragging.value) startDragPosition = clientY;
   startedDragging.value = true;
-  const draggedPixels = Math.abs(startDragPosition - clientY);
-  if (draggedPixels > 2) isDragging.value = true;
+  distance.value = Math.abs(startDragPosition - clientY);
+  if (distance.value > 2) isDragging.value = true;
   if (!isDragging.value) return;
+
+  // detect change in direction and reset velocity calculation
+  dragDirection.value = clientY > prevY.value ? "down" : "up";
+  if (previousDirection.value !== dragDirection.value) {
+    startVelocityCalculation();
+  }
+  previousDirection.value = dragDirection.value;
+  prevY.value = clientY;
 
   // calculate the distance the user has dragged
   y.value = dampen(startY.value - clientY, 0, heightOfContent.value);
@@ -161,6 +186,11 @@ const stopDrag = async () => {
   allowDrag.value = false;
   isDragging.value = false;
   startedDragging.value = false;
+
+  // calculate the velocity of the drag
+  const endTime = new Date().getTime();
+  const elapsedTime = endTime - startTime.value;
+  velocity.value = (distance.value / elapsedTime) * 1;
 
   //snap the card to full open or fully closed
   if (isOpen.value) {
@@ -189,8 +219,8 @@ const style = computed(() => {
 
     transition:
       isDragging.value || firstRender.value
-        ? "none"
-        : "transform 0.2s ease-out",
+        ? `none`
+        : `transform ${transitionSpeed.value}s ease-out`,
   };
 
   styles.top = "100%";
@@ -244,6 +274,10 @@ onMounted(() => {
 
 const progress = computed(() => {
   return clamp(y.value / heightOfContent.value, 0, 1);
+});
+
+const transitionSpeed = computed(() => {
+  return clamp(0.4 / velocity.value, 0.05, 0.2).toFixed(2);
 });
 
 const { animatedProgress } = useTweenNumber({
@@ -316,6 +350,7 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
+        {{ transitionSpeed }}
         <slot name="handle">
           <div
             :style="{
