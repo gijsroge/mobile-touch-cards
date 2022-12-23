@@ -66,6 +66,7 @@ const allowDrag = ref(false);
 const startY = ref(0);
 const y = ref(0);
 const isOpen = ref(false);
+const lockScroll = ref(false);
 
 const { trap, release } = useTrapFocus(innerCardRef);
 
@@ -221,7 +222,23 @@ watch(animatedProgress, () => {
   emit("progress", animatedProgress.value);
 });
 
-watch(isOpen, () => (isOpen.value ? trap() : release()));
+watch(isOpen, () => {
+  if (isOpen.value) {
+    trap();
+  } else {
+    release();
+  }
+});
+
+watch(lockScroll, () => {
+  if (lockScroll.value) {
+    document.documentElement.style.setProperty("overflow", "hidden");
+  } else {
+    document.documentElement.style.removeProperty("overflow");
+  }
+});
+
+watch(isDragging, () => (lockScroll.value = isDragging.value || isOpen.value));
 
 watch(y, () => {
   if (!isDragging.value) isOpen.value = y.value > props.thresHold;
