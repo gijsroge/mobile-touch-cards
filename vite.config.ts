@@ -7,7 +7,7 @@ export default defineConfig({
   build: {
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, "src/components/mobile-card.vue"),
+      entry: resolve(__dirname, "src/components/mobile-sheet.vue"),
       name: "MobileSheet",
       // the proper extensions will be added
       fileName: "mobile-sheet",

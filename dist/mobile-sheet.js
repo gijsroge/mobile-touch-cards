@@ -1,4 +1,4 @@
-import { ref as u, watch as y, onUnmounted as H, watchEffect as N, defineComponent as F, onMounted as M, computed as C, openBlock as U, createElementBlock as V, normalizeStyle as G, unref as Y, normalizeClass as J, createElementVNode as k, mergeProps as Q, renderSlot as R } from "vue";
+import { ref as u, watch as w, onUnmounted as H, watchEffect as N, defineComponent as F, onMounted as M, computed as C, openBlock as U, createElementBlock as V, normalizeStyle as G, unref as Y, normalizeClass as J, createElementVNode as L, mergeProps as Q, renderSlot as R } from "vue";
 const x = (n, o, a) => Math.min(Math.max(n, o), a), X = (n, o, a) => {
   let s = n;
   if (n > a) {
@@ -11,7 +11,7 @@ const x = (n, o, a) => Math.min(Math.max(n, o), a), X = (n, o, a) => {
   duration: o
 }) => {
   const a = u(n.value), s = u(null);
-  y(n, (d, m) => t(m, d));
+  w(n, (d, m) => t(m, d));
   const t = (d, m) => {
     const c = performance.now(), v = (r) => r * (2 - r), g = () => {
       const r = performance.now() - c, h = x(r / o, 0, 1);
@@ -52,7 +52,7 @@ const ee = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
   inheritAttrs: !1
 }, oe = /* @__PURE__ */ F({
   ...ae,
-  __name: "mobile-card",
+  __name: "mobile-sheet",
   props: {
     rootClass: {
       type: String,
@@ -96,39 +96,41 @@ const ee = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     "stop-drag"
   ],
   setup(n, { emit: o }) {
-    const a = n, s = typeof document < "u", t = u(null), d = u(null), m = u(null), c = u(!1), v = u(a.maxDistance), g = u(a.handleHeight), r = u(!0), h = u(!1), L = u(0), i = u(0), p = u(!1), b = u(!1), { trap: O, release: $ } = _(d);
+    const a = n, s = typeof document < "u", t = u(null), d = u(null), m = u(null), c = u(!1), v = u(a.maxDistance), g = u(a.handleHeight), r = u(!0), h = u(!1), P = u(0), i = u(0), p = u(!1), E = u(!1), { trap: O, release: $ } = _(d);
     M(() => {
       window.addEventListener("click", (e) => j(e), {
         passive: !0
-      }), window.addEventListener("mouseup", () => S(), { passive: !0 }), window.addEventListener("mousemove", B, { passive: !0 });
+      }), window.addEventListener("mouseup", () => S(), { passive: !0 }), window.addEventListener("mousemove", B, { passive: !0 }), window.addEventListener("keydown", (e) => {
+        e.key === "Escape" && y();
+      });
     }), H(() => {
       window.removeEventListener("mousemove", () => {
       }), window.removeEventListener("mouseup", () => {
-      });
+      }), window.removeEventListener("keydown", () => y);
     });
     const z = () => {
       c.value || (i.value = v.value, o("open"));
-    }, P = () => {
+    }, y = () => {
       c.value || (i.value = 0, o("close"));
     }, I = () => {
-      p.value ? P() : z();
+      p.value ? y() : z();
     }, j = (e) => {
-      t.value && (t.value.contains(e.target) || P());
-    }, w = (e) => {
+      t.value && (t.value.contains(e.target) || y());
+    }, b = (e) => {
       if (e.target instanceof HTMLElement && e.target.closest("[data-ignore-drag]"))
         return;
       h.value = !0;
       const l = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      L.value = l + i.value, o("start-drag");
+      P.value = l + i.value, o("start-drag");
     };
     let D = 0;
-    const E = u(!1), B = (e) => {
+    const T = u(!1), B = (e) => {
       if (!h.value)
         return;
       const l = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      E.value || (D = l), E.value = !0, Math.abs(D - l) > 2 && (c.value = !0), i.value = X(L.value - l, 0, v.value), o("drag", i.value);
+      T.value || (D = l), T.value = !0, Math.abs(D - l) > 2 && (c.value = !0), c.value && (i.value = X(P.value - l, 0, v.value), o("drag", i.value));
     }, S = async () => {
-      await new Promise((e) => setTimeout(e, 10)), h.value = !1, c.value = !1, E.value = !1, p.value ? i.value < v.value - a.thresHold ? i.value = 0 : i.value = v.value : i.value >= a.thresHold ? i.value = v.value : i.value = 0, o("stop-drag");
+      await new Promise((e) => setTimeout(e, 10)), h.value = !1, c.value = !1, T.value = !1, p.value ? i.value < v.value - a.thresHold ? i.value = 0 : i.value = v.value : i.value >= a.thresHold ? i.value = v.value : i.value = 0, o("stop-drag");
     }, q = C(() => {
       const e = {
         position: "fixed",
@@ -138,7 +140,7 @@ const ee = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
         transition: c.value || r.value ? "none" : "transform 0.2s ease-out"
       };
       return e.top = "100%", e.transform = `translateY(${(i.value + g.value) * -1}px)`, e;
-    }), T = s ? new ResizeObserver((e) => {
+    }), k = s ? new ResizeObserver((e) => {
       if (!t.value)
         return;
       const { blockSize: l } = e[0].borderBoxSize[0], f = window.innerHeight;
@@ -160,16 +162,16 @@ const ee = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       progress: W,
       duration: 250
     });
-    return C(() => p.value ? 0 : -1), y(A, () => {
+    return C(() => p.value ? 0 : -1), w(A, () => {
       o("progress", A.value);
-    }), y(p, () => {
+    }), w(p, () => {
       p.value ? O() : $();
-    }), y(b, () => {
-      b.value ? document.documentElement.style.setProperty("overflow", "hidden") : document.documentElement.style.removeProperty("overflow");
-    }), y(c, () => b.value = c.value || p.value), y(i, () => {
+    }), w(E, () => {
+      E.value ? document.documentElement.style.setProperty("overflow", "hidden") : document.documentElement.style.removeProperty("overflow");
+    }), w(c, () => E.value = c.value || p.value), w(i, () => {
       c.value || (p.value = i.value > a.thresHold);
     }), N(() => {
-      t.value && (T == null || T.observe(t.value), K());
+      t.value && (k == null || k.observe(t.value), K());
     }), (e, l) => (U(), V("div", {
       ref_key: "cardRef",
       ref: t,
@@ -179,26 +181,26 @@ const ee = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       "aria-modal": "true",
       role: "dialog"
     }, [
-      k("div", Q({
+      L("div", Q({
         ref_key: "innerCardRef",
         ref: d
       }, e.$attrs, {
         style: { marginTop: "0px !important", touchAction: "none" },
         onTouchend: l[2] || (l[2] = () => S()),
         onTouchmovePassive: B,
-        onMousedown: l[3] || (l[3] = (f) => n.dragEntireCard ? w(f) : null),
-        onTouchstartPassive: l[4] || (l[4] = (f) => n.dragEntireCard ? w(f) : null)
+        onMousedown: l[3] || (l[3] = (f) => n.dragEntireCard ? b(f) : null),
+        onTouchstartPassive: l[4] || (l[4] = (f) => n.dragEntireCard ? b(f) : null)
       }), [
-        k("button", {
+        L("button", {
           ref_key: "handleRef",
           ref: m,
           onClick: I,
-          onMousedown: l[0] || (l[0] = (f) => n.dragEntireCard ? null : w(f)),
-          onTouchstartPassive: l[1] || (l[1] = (f) => n.dragEntireCard ? null : w(f)),
+          onMousedown: l[0] || (l[0] = (f) => n.dragEntireCard ? null : b(f)),
+          onTouchstartPassive: l[1] || (l[1] = (f) => n.dragEntireCard ? null : b(f)),
           "aria-label": n.ariaLabel
         }, [
           R(e.$slots, "handle", {}, () => [
-            k("div", {
+            L("div", {
               style: {
                 userSelect: "none",
                 cursor: "move",
