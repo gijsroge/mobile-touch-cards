@@ -43,6 +43,14 @@ const props = defineProps({
     type: Number,
     default: 50,
   },
+  a11yWarnings: {
+    type: Boolean,
+    default: true,
+  },
+  ariaLabel: {
+    type: String,
+    default: "Open modal",
+  },
 });
 
 const emit = defineEmits([
@@ -205,6 +213,26 @@ const resizeObserver = isSsr
     })
   : null;
 
+const validateAria = () => {
+  if (!cardRef.value || !props.a11yWarnings) return;
+
+  const ariaLabelledBy = cardRef.value.getAttribute("aria-labelledby");
+
+  // check if cardRef contains a aria-labelledby attribute
+  if (!ariaLabelledBy) {
+    console.warn(
+      "[mobile-sheet.js] The <mobile-sheet> element should have an aria-labelledby attribute that points to the id of a title element inside the content"
+    );
+  } else {
+    const titleElement = document.getElementById(ariaLabelledBy);
+    if (!titleElement) {
+      console.warn(
+        `[mobile-sheet.js] The aria labelledby "${ariaLabelledBy}" is not pointing to a valid element inside the mobile sheet content`
+      );
+    }
+  }
+};
+
 onMounted(() => {
   setTimeout(() => (firstRender.value = false), 1);
 });
@@ -217,6 +245,8 @@ const { animatedProgress } = useTweenNumber({
   progress: progress,
   duration: 250,
 });
+
+const tabIndex = computed(() => (isOpen.value ? 0 : -1));
 
 watch(animatedProgress, () => {
   emit("progress", animatedProgress.value);
@@ -247,10 +277,9 @@ watch(y, () => {
 watchEffect(() => {
   if (cardRef.value) {
     resizeObserver?.observe(cardRef.value);
+    validateAria();
   }
 });
-
-// focus lock if open
 </script>
 
 <template>
@@ -259,9 +288,8 @@ watchEffect(() => {
     v-bind:style="style"
     :class="[rootClass]"
     data-modal-sheet
+    aria-modal="true"
     role="dialog"
-    aria-labelledby="myDialog"
-    :aria-hidden="!isOpen"
   >
     <div
       ref="innerCardRef"
@@ -281,6 +309,7 @@ watchEffect(() => {
         @touchstart.passive="
           (event) => (!dragEntireCard ? startDrag(event) : null)
         "
+        :aria-label="ariaLabel"
       >
         <slot name="handle">
           <div
@@ -299,6 +328,7 @@ watchEffect(() => {
           ></div>
         </slot>
       </button>
+
       <slot></slot>
     </div>
   </div>

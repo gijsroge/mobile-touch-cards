@@ -15,36 +15,63 @@ const mobileCardProgress = ref(0);
       class="mx-auto p-4 prose space-y-4 origin-top"
       :style="{ transform: `scale(${1 - mobileCardProgress * 0.1})` }"
     >
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ea
+        molestias ratione praesentium non amet saepe inventore, quam deleniti
+        odit eligendi officiis minus, quas quae corrupti omnis, accusantium
+        voluptates a!
+      </p>
+      <button>test</button>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ea
+        molestias ratione praesentium non amet saepe inventore, quam deleniti
+        odit eligendi officiis minus, quas quae corrupti omnis, accusantium
+        voluptates a!
+      </p>
+      <button>test</button>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ea
+        molestias ratione praesentium non amet saepe inventore, quam deleniti
+        odit eligendi officiis minus, quas quae corrupti omnis, accusantium
+        voluptates a!
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ea
+        molestias ratione praesentium non amet saepe inventore, quam deleniti
+        odit eligendi officiis minus, quas quae corrupti omnis, accusantium
+        voluptates a!
+      </p>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ea
+        molestias ratione praesentium non amet saepe inventore, quam deleniti
+        odit eligendi officiis minus, quas quae corrupti omnis, accusantium
+        voluptates a!
+      </p>
     </div>
     <MobileCard
-      class="m-2 rounded-xl overflow-hidden flex flex-col p-10 pt-0 bg-black text-white"
+      class="mx-2 rounded-t-xl overflow-hidden flex flex-col p-10 max-h-[95vh] pt-0 bg-black text-white"
       root-class="z-20"
       @progress="(progress: number) => mobileCardProgress = progress"
     >
-      <div data-ignore-drag>
-        <p class="p-3">
+      <div class="space-y-2" data-ignore-drag>
+        <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
           cum ducimus?
         </p>
 
-        <a href="#">hoi</a>
-        <p class="p-3">
+        <a class="block" href="#">button</a>
+        <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
           cum ducimus?
         </p>
 
-        <a href="#">hoi</a>
+        <a class="block" href="#">button</a>
 
-        <p class="p-3">
+        <p>
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
