@@ -84,10 +84,14 @@ onMounted(() => {
   });
   window.addEventListener("mouseup", () => stopDrag(), { passive: true });
   window.addEventListener("mousemove", whileDrag, { passive: true });
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") close();
+  });
 });
 onUnmounted(() => {
   window.removeEventListener("mousemove", () => {});
   window.removeEventListener("mouseup", () => {});
+  window.removeEventListener("keydown", () => close);
 });
 
 const open = () => {
@@ -145,6 +149,7 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   startedDragging.value = true;
   const draggedPixels = Math.abs(startDragPosition - clientY);
   if (draggedPixels > 2) isDragging.value = true;
+  if (!isDragging.value) return;
 
   // calculate the distance the user has dragged
   y.value = dampen(startY.value - clientY, 0, heightOfContent.value);
