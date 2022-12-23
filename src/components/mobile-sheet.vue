@@ -285,8 +285,6 @@ const { animatedProgress } = useTweenNumber({
   duration: 250,
 });
 
-const tabIndex = computed(() => (isOpen.value ? 0 : -1));
-
 watch(animatedProgress, () => {
   emit("progress", animatedProgress.value);
 });
@@ -350,7 +348,6 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
-        {{ transitionSpeed }}
         <slot name="handle">
           <div
             :style="{
