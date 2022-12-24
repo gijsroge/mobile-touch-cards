@@ -80,8 +80,8 @@ const startTime = ref(0);
 const endTime = ref(0);
 const distance = ref(0);
 const velocity = ref(1);
-const dragDirection = ref("up");
-const previousDirection = ref("up");
+const dragDirection = ref<"up" | "down" | null>(null);
+const previousDirection = ref<"up" | "down" | null>(null);
 
 const { trap, release } = useTrapFocus(innerCardRef);
 
@@ -159,6 +159,7 @@ let startDragPosition = 0;
 const startedDragging = ref(false);
 const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!allowDrag.value) return;
+  console.log("whileDrag");
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
 
   // keep track of how many pixels has been dragged
@@ -172,9 +173,9 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   dragDirection.value = clientY > prevY.value ? "down" : "up";
   if (previousDirection.value !== dragDirection.value) {
     startVelocityCalculation();
+    prevY.value = clientY;
   }
   previousDirection.value = dragDirection.value;
-  prevY.value = clientY;
 
   // calculate the distance the user has dragged
   y.value = dampen(startY.value - clientY, 0, heightOfContent.value);
@@ -193,17 +194,33 @@ const stopDrag = async () => {
   velocity.value = (distance.value / elapsedTime) * 1;
 
   //snap the card to full open or fully closed
-  if (isOpen.value) {
-    if (y.value < heightOfContent.value - props.thresHold) {
-      y.value = 0;
-    } else {
-      y.value = heightOfContent.value;
-    }
-  } else {
+  // if (isOpen.value) {
+  //   if (y.value < heightOfContent.value - props.thresHold) {
+  //     y.value = 0;
+  //   } else {
+  //     y.value = heightOfContent.value;
+  //   }
+  // } else {
+  //   if (y.value >= props.thresHold) {
+  //     y.value = heightOfContent.value;
+  //   } else {
+  //     y.value = 0;
+  //   }
+  // }
+
+  console.log(dragDirection.value);
+
+  if (dragDirection.value === "up") {
     if (y.value >= props.thresHold) {
       y.value = heightOfContent.value;
     } else {
       y.value = 0;
+    }
+  } else {
+    if (y.value < heightOfContent.value - props.thresHold) {
+      y.value = 0;
+    } else {
+      y.value = heightOfContent.value;
     }
   }
 
@@ -348,6 +365,7 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
+        {{ dragDirection }}
         <slot name="handle">
           <div
             :style="{
