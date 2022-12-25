@@ -1,12 +1,12 @@
-import { ref as a, watch as h, onUnmounted as B, watchEffect as V, defineComponent as _, onMounted as I, computed as S, openBlock as ee, createElementBlock as te, normalizeStyle as ne, unref as j, normalizeClass as ae, createElementVNode as P, mergeProps as le, createTextVNode as oe, toDisplayString as se, renderSlot as q } from "vue";
-const T = (l, s, o) => Math.min(Math.max(l, s), o), re = (l, s, o) => {
+import { ref as a, watch as h, onUnmounted as B, watchEffect as F, defineComponent as _, onMounted as I, computed as P, openBlock as ee, createElementBlock as te, normalizeStyle as ne, unref as j, normalizeClass as ae, createElementVNode as S, mergeProps as le, renderSlot as q } from "vue";
+const T = (l, s, o) => Math.min(Math.max(l, s), o), oe = (l, s, o) => {
   let r = l;
   if (l > o) {
     const n = r - o;
     r -= n * 0.6;
   }
   return l < s && (r -= r * 0.6), r;
-}, ie = ({
+}, se = ({
   progress: l,
   duration: s
 }) => {
@@ -23,7 +23,7 @@ const T = (l, s, o) => Math.min(Math.max(l, s), o), re = (l, s, o) => {
     r.value && cancelAnimationFrame(r.value);
   }), { animatedProgress: o };
 };
-function ue(l) {
+function re(l) {
   const s = a(!1);
   let o = null, r = null, n = null, d = null;
   const m = 9, c = () => {
@@ -36,7 +36,7 @@ function ue(l) {
       p && (i.shiftKey ? document.activeElement === n && (d == null || d.focus(), i.preventDefault()) : document.activeElement === d && (n == null || n.focus(), i.preventDefault()));
     }
   };
-  return V(() => {
+  return F(() => {
     l.value && (r = l.value.querySelectorAll(
       'a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])'
     ), n = r[0], d = r[r.length - 1], l.value.addEventListener("keydown", g));
@@ -45,13 +45,13 @@ function ue(l) {
     return (i = l.value) == null ? void 0 : i.removeEventListener("keydown", g);
   }), { trap: c, release: v, isLocked: s };
 }
-const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.org/2000/svg">
+const ie = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.org/2000/svg">
 <rect width="70" height="3" rx="3" fill="currentColor"/>
 </svg>
-`, ce = ["aria-label"], ve = ["innerHTML"], fe = {
+`, ue = ["aria-label"], de = ["innerHTML"], ce = {
   inheritAttrs: !1
-}, ge = /* @__PURE__ */ _({
-  ...fe,
+}, fe = /* @__PURE__ */ _({
+  ...ce,
   __name: "mobile-sheet",
   props: {
     rootClass: {
@@ -96,11 +96,11 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     "stop-drag"
   ],
   setup(l, { emit: s }) {
-    const o = l, r = typeof document < "u", n = a(null), d = a(null), m = a(null), c = a(!1), v = a(o.maxDistance), g = a(o.handleHeight), i = a(!0), p = a(!1), Y = a(0), C = a(0), u = a(0), w = a(!1), k = a(!1), A = a(0), D = a(0), L = a(1), y = a(null), M = a(null), { trap: F, release: K } = ue(d);
+    const o = l, r = typeof document < "u", n = a(null), d = a(null), m = a(null), c = a(!1), v = a(o.maxDistance), g = a(o.handleHeight), i = a(!0), p = a(!1), Y = a(0), C = a(0), u = a(0), w = a(!1), k = a(!1), A = a(0), D = a(0), L = a(1), y = a(null), M = a(null), { trap: K, release: V } = re(d);
     I(() => {
       window.addEventListener("click", (e) => G(e), {
         passive: !0
-      }), window.addEventListener("mouseup", () => O(), { passive: !0 }), window.addEventListener("mousemove", $, { passive: !0 }), window.addEventListener("keydown", (e) => {
+      }), window.addEventListener("mouseup", () => O(), { passive: !0 }), window.addEventListener("mousemove", N, { passive: !0 }), window.addEventListener("keydown", (e) => {
         e.key === "Escape" && b();
       });
     }), B(() => {
@@ -125,17 +125,17 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       const t = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
       Y.value = t + u.value, R(), s("start-drag");
     };
-    let N = 0;
-    const x = a(!1), $ = (e) => {
+    let $ = 0;
+    const x = a(!1), N = (e) => {
       if (!p.value)
         return;
       const t = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      x.value || (N = t), x.value = !0, D.value = Math.abs(N - t), D.value > 2 && (c.value = !0), c.value && (C.value !== t && (y.value = t > C.value ? "down" : "up"), M.value !== y.value && R(), C.value = t, M.value = y.value, u.value = re(Y.value - t, 0, v.value), s("drag", u.value));
+      x.value || ($ = t), x.value = !0, D.value = Math.abs($ - t), D.value > 2 && (c.value = !0), c.value && (C.value !== t && (y.value = t > C.value ? "down" : "up"), M.value !== y.value && R(), C.value = t, M.value = y.value, u.value = oe(Y.value - t, 0, v.value), s("drag", u.value));
     }, O = async () => {
       await new Promise((f) => setTimeout(f, 10)), p.value = !1, c.value = !1, x.value = !1;
       const t = new Date().getTime() - A.value;
       L.value = D.value / t * 1, y.value === "up" ? u.value >= o.thresHold ? u.value = v.value : u.value = 0 : u.value < v.value - o.thresHold ? u.value = 0 : u.value = v.value, s("stop-drag");
-    }, J = S(() => {
+    }, J = P(() => {
       const e = {
         position: "fixed",
         willChange: "transform",
@@ -162,19 +162,19 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     I(() => {
       setTimeout(() => i.value = !1, 1);
     });
-    const X = S(() => T(u.value / v.value, 0, 1)), Z = S(() => T(0.4 / L.value, 0.05, 0.2).toFixed(2)), { animatedProgress: z } = ie({
+    const X = P(() => T(u.value / v.value, 0, 1)), Z = P(() => T(0.4 / L.value, 0.05, 0.2).toFixed(2)), { animatedProgress: z } = se({
       progress: X,
       duration: 250
     });
     return h(z, () => {
       s("progress", z.value);
     }), h(w, () => {
-      w.value ? F() : K();
+      w.value ? K() : V();
     }), h(k, () => {
       k.value ? document.documentElement.style.setProperty("overflow", "hidden") : document.documentElement.style.removeProperty("overflow");
     }), h(c, () => k.value = c.value || w.value), h(u, () => {
       c.value || (w.value = u.value > o.thresHold);
-    }), V(() => {
+    }), F(() => {
       n.value && (H == null || H.observe(n.value), Q());
     }), (e, t) => (ee(), te("div", {
       ref_key: "cardRef",
@@ -185,17 +185,17 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       "aria-modal": "true",
       role: "dialog"
     }, [
-      P("div", le({
+      S("div", le({
         ref_key: "innerCardRef",
         ref: d
       }, e.$attrs, {
         style: { marginTop: "0px !important", touchAction: "none" },
         onTouchend: t[2] || (t[2] = () => O()),
-        onTouchmovePassive: $,
+        onTouchmovePassive: N,
         onMousedown: t[3] || (t[3] = (f) => l.dragEntireCard ? E(f) : null),
         onTouchstartPassive: t[4] || (t[4] = (f) => l.dragEntireCard ? E(f) : null)
       }), [
-        P("button", {
+        S("button", {
           ref_key: "handleRef",
           ref: m,
           onClick: U,
@@ -203,9 +203,8 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
           onTouchstartPassive: t[1] || (t[1] = (f) => l.dragEntireCard ? null : E(f)),
           "aria-label": l.ariaLabel
         }, [
-          oe(se(y.value) + " ", 1),
           q(e.$slots, "handle", {}, () => [
-            P("div", {
+            S("div", {
               style: {
                 userSelect: "none",
                 cursor: "move",
@@ -217,15 +216,15 @@ const de = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
                 alignItems: "center",
                 justifyContent: "center"
               },
-              innerHTML: j(de)
-            }, null, 8, ve)
+              innerHTML: j(ie)
+            }, null, 8, de)
           ])
-        ], 40, ce),
+        ], 40, ue),
         q(e.$slots, "default")
       ], 16)
     ], 6));
   }
 });
 export {
-  ge as default
+  fe as default
 };

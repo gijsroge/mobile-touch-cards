@@ -350,7 +350,6 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
-        {{ dragDirection }}
         <slot name="handle">
           <div
             :style="{

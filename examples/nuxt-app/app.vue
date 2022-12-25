@@ -32,7 +32,7 @@ const MobileSheetProgress = ref(0);
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
           quidem, eum adipisci odio est ipsum eaque, dolore doloribus voluptatum
           eligendi labore error veritatis dolor odit ratione soluta reiciendis
-          cum ducimus?
+          cum ducimus
         </p>
         <p class="">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio
