@@ -159,7 +159,6 @@ let startDragPosition = 0;
 const startedDragging = ref(false);
 const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!allowDrag.value) return;
-  console.log("whileDrag");
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
 
   // keep track of how many pixels has been dragged
@@ -170,11 +169,13 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
   // detect change in direction and reset velocity calculation
+  const directionOffset = dragDirection.value === "up" ? -1 : 1;
   dragDirection.value = clientY > prevY.value ? "down" : "up";
   if (previousDirection.value !== dragDirection.value) {
     startVelocityCalculation();
-    prevY.value = clientY;
   }
+
+  prevY.value = clientY - directionOffset;
   previousDirection.value = dragDirection.value;
 
   // calculate the distance the user has dragged
@@ -192,23 +193,6 @@ const stopDrag = async () => {
   const endTime = new Date().getTime();
   const elapsedTime = endTime - startTime.value;
   velocity.value = (distance.value / elapsedTime) * 1;
-
-  //snap the card to full open or fully closed
-  // if (isOpen.value) {
-  //   if (y.value < heightOfContent.value - props.thresHold) {
-  //     y.value = 0;
-  //   } else {
-  //     y.value = heightOfContent.value;
-  //   }
-  // } else {
-  //   if (y.value >= props.thresHold) {
-  //     y.value = heightOfContent.value;
-  //   } else {
-  //     y.value = 0;
-  //   }
-  // }
-
-  console.log(dragDirection.value);
 
   if (dragDirection.value === "up") {
     if (y.value >= props.thresHold) {
