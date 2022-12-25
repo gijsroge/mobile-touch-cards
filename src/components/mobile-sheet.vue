@@ -77,7 +77,6 @@ const y = ref(0);
 const isOpen = ref(false);
 const lockScroll = ref(false);
 const startTime = ref(0);
-const endTime = ref(0);
 const distance = ref(0);
 const velocity = ref(1);
 const dragDirection = ref<"up" | "down" | null>(null);
@@ -169,13 +168,15 @@ const whileDrag = (e: MouseEvent | TouchEvent) => {
   if (!isDragging.value) return;
 
   // detect change in direction and reset velocity calculation
-  const directionOffset = dragDirection.value === "up" ? -1 : 1;
-  dragDirection.value = clientY > prevY.value ? "down" : "up";
+  // don't change direction if same as previous, when you release the mouse,
+  // this event also get's fired and causes the direction to change
+  if (prevY.value !== clientY)
+    dragDirection.value = clientY > prevY.value ? "down" : "up";
   if (previousDirection.value !== dragDirection.value) {
     startVelocityCalculation();
   }
 
-  prevY.value = clientY - directionOffset;
+  prevY.value = clientY;
   previousDirection.value = dragDirection.value;
 
   // calculate the distance the user has dragged
@@ -349,6 +350,7 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
+        {{ dragDirection }}
         <slot name="handle">
           <div
             :style="{
