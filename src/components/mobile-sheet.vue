@@ -235,8 +235,15 @@ const style = computed(() => {
 const resizeObserver = isSsr
   ? new ResizeObserver((entries) => {
       if (!cardRef.value) return;
-      const { blockSize: contentHeight } = entries[0].borderBoxSize[0];
+
+      // get the height of the content
+      let contentHeight = entries[0]?.borderBoxSize
+        ? entries[0]?.borderBoxSize[0]?.blockSize
+        : null;
+      if (!contentHeight) contentHeight = entries[0]?.contentRect.height;
+
       const viewportHeight = window.innerHeight;
+
       // keep track of the height of the handle
       if (handleRef.value) handleHeight.value = handleRef.value.clientHeight;
       // keep track of the height of the content
