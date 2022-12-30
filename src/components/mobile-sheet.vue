@@ -226,7 +226,7 @@ const stopDrag = async () => {
 
 const style = computed(() => {
   const easing = wasDragging.value
-    ? "ease-out"
+    ? cubicBezierBasedOnVelocity.value
     : "cubic-bezier(0.65, 0, 0.35, 1)";
   const styles: CSSProperties = {
     position: "fixed",
@@ -312,6 +312,12 @@ const progress = computed(() => {
 
 const transitionSpeed = computed(() => {
   return clamp(0.4 / velocity.value, 0.05, 0.2).toFixed(2);
+});
+
+const cubicBezierBasedOnVelocity = computed(() => {
+  return `cubic-bezier(0.22, ${clamp(velocity.value, 0.1, 1.5).toFixed(
+    2
+  )}, 0.35, 1)`;
 });
 
 const { animatedProgress } = useTweenNumber({
