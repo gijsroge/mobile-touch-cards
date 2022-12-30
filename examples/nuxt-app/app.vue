@@ -12,28 +12,34 @@ const MobileSheetProgress = ref(0);
       class="fixed inset-0 bg-black z-10"
       :style="{ opacity: MobileSheetProgress * 0.5 }"
     ></span>
-    <button class="fixed top-0 left-0 z-20" @click="isOpen = !isOpen">
-      toggle {{ isOpen }}
-    </button>
+
     <div
       class="mx-auto p-4 prose space-y-4 origin-top"
       :style="{ transform: `scale(${1 - MobileSheetProgress * 0.1})` }"
     >
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
-      <div class="bg-black/5 rounded p-4 min-h-[17vh]"></div>
+      <div
+        class="sticky top-0 bg-gray-100 shadow rounded p-4 min-h-[17vh] flex items-center justify-center"
+      >
+        <button
+          class="text-white rounded p-2 bg-black"
+          @click="isOpen = !isOpen"
+        >
+          toggle {{ isOpen }}
+        </button>
+      </div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
+      <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
     </div>
     <div class="md:flex justify-end">
       <MobileSheet
-        :close-able="false"
         @open="isOpen = true"
         @close="isOpen = false"
         class="mx-2 rounded-t-xl md:max-w-[400px] overflow-hidden flex flex-col px-8 pb-6 max-h-[80vh] bg-black text-white"
