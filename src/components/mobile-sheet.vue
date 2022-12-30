@@ -386,7 +386,6 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
-        {{ wasDragging }}
         <slot name="handle">
           <div
             :style="{
