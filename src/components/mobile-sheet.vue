@@ -18,6 +18,10 @@ import { clamp, dampen, useTrapFocus, useTweenNumber } from "..";
 import handleAsset from "../assets/handle";
 
 const props = defineProps({
+  closeAble: {
+    type: Boolean,
+    default: true,
+  },
   rootClass: {
     type: String,
     default: "",
@@ -67,6 +71,7 @@ const cardRef = ref<HTMLElement | null>(null);
 const innerCardRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
+const wasDragging = ref(false);
 const heightOfContent = ref(props.maxDistance);
 const handleHeight = ref(props.handleHeight);
 const firstRender = ref(true);
@@ -100,19 +105,20 @@ onUnmounted(() => {
   window.removeEventListener("keydown", () => close);
 });
 
-const open = () => {
-  if (isDragging.value) return;
-  y.value = heightOfContent.value;
-  emit("open");
+const open = ({ force }: { force: Boolean | null } = { force: null }) => {
+  setTimeout(() => {
+    if (!isDragging.value && force !== null && !force) return;
+    y.value = heightOfContent.value;
+  });
 };
 
-const close = () => {
-  if (isDragging.value) return;
+const close = ({ force }: { force: Boolean | null } = { force: null }) => {
+  if (!isDragging.value && force !== null && !force) return;
   y.value = 0;
-  emit("close");
 };
 
 const toggle = () => {
+  if (isDragging.value) return;
   if (isOpen.value) {
     close();
   } else {
@@ -141,6 +147,11 @@ const startDrag = (e: MouseEvent | TouchEvent) => {
 
   // allow dragging
   allowDrag.value = true;
+
+  // keep track of if user was dragging or not, used to change transition easing
+  // we want an easing that fits the user's action, if the user was dragging or if
+  // the user just clicked and the sheet opened
+  wasDragging.value = true;
 
   // get Y position of the mouse or touch
   const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
@@ -188,6 +199,7 @@ const stopDrag = async () => {
   await new Promise((r) => setTimeout(r, 10));
   allowDrag.value = false;
   isDragging.value = false;
+  setTimeout(() => (wasDragging.value = false), 300);
   startedDragging.value = false;
 
   // calculate the velocity of the drag
@@ -213,6 +225,9 @@ const stopDrag = async () => {
 };
 
 const style = computed(() => {
+  const easing = wasDragging.value
+    ? "ease-out"
+    : "cubic-bezier(0.65, 0, 0.35, 1)";
   const styles: CSSProperties = {
     position: "fixed",
     willChange: "transform",
@@ -222,11 +237,13 @@ const style = computed(() => {
     transition:
       isDragging.value || firstRender.value
         ? `none`
-        : `transform ${transitionSpeed.value}s ease-out`,
+        : `transform ${transitionSpeed.value}s ${easing}`,
   };
 
   styles.top = "100%";
-  styles.transform = `translateY(${(y.value + handleHeight.value) * -1}px)`;
+  let offset = props.closeAble ? 0 : handleHeight.value;
+  if (isOpen.value) offset = handleHeight.value;
+  styles.transform = `translateY(${(y.value + offset) * -1}px)`;
 
   return styles;
 });
@@ -277,6 +294,14 @@ const validateAria = () => {
   }
 };
 
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (isOpen) open({ force: true });
+    else close({ force: true });
+  }
+);
+
 onMounted(() => {
   setTimeout(() => (firstRender.value = false), 1);
 });
@@ -300,21 +325,25 @@ watch(animatedProgress, () => {
 
 watch(isOpen, () => {
   if (isOpen.value) {
+    emit("open");
     trap();
   } else {
+    emit("close");
     release();
   }
 });
 
-watch(lockScroll, () => {
-  if (lockScroll.value) {
+watch(lockScroll, (locked) => {
+  if (locked) {
     document.documentElement.style.setProperty("overflow", "hidden");
   } else {
     document.documentElement.style.removeProperty("overflow");
   }
 });
 
-watch(isDragging, () => (lockScroll.value = isDragging.value || isOpen.value));
+watchEffect(() => {
+  lockScroll.value = isDragging.value || isOpen.value;
+});
 
 watch(y, () => {
   if (!isDragging.value) isOpen.value = y.value > props.thresHold;
@@ -357,6 +386,7 @@ watchEffect(() => {
         "
         :aria-label="ariaLabel"
       >
+        {{ wasDragging }}
         <slot name="handle">
           <div
             :style="{
