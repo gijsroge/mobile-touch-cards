@@ -24,7 +24,7 @@ const MobileSheetProgress = ref(0);
           class="text-white rounded p-2 bg-black"
           @click="isOpen = !isOpen"
         >
-          {{ isOpen ? "Close" : "Open" }}}
+          {{ isOpen ? "Close" : "Open" }}
         </button>
       </div>
       <div class="bg-gray-100 rounded p-4 min-h-[17vh]"></div>
