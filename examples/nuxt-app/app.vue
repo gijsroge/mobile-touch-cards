@@ -40,6 +40,7 @@ const MobileSheetProgress = ref(0);
     </div>
     <div class="md:flex justify-end">
       <MobileSheet
+        :close-able="false"
         @open="isOpen = true"
         @close="isOpen = false"
         class="mx-2 rounded-t-xl md:max-w-[400px] overflow-hidden flex flex-col px-8 pb-6 max-h-[80vh] bg-black text-white"
