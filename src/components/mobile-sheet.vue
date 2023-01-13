@@ -311,7 +311,7 @@ const progress = computed(() => {
 });
 
 const transitionSpeed = computed(() => {
-  return 0.55;
+  return 0.45;
 });
 
 const cubicBezierBasedOnVelocity = computed(() => {
