@@ -178,7 +178,7 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     ), U(() => {
       setTimeout(() => g.value = !1, 1);
     });
-    const ne = E(() => C(u.value / c.value, 0, 1)), le = E(() => 0.25), ae = E(() => `cubic-bezier(0.22, ${C(x.value, 1, 1.3).toFixed(
+    const ne = E(() => C(u.value / c.value, 0, 1)), le = E(() => 0.55), ae = E(() => `cubic-bezier(0.22, ${C(x.value, 1, 1.3).toFixed(
       2
     )}, 0.35, 1)`), { animatedProgress: q } = ve({
       progress: ne,
