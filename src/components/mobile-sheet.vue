@@ -302,18 +302,6 @@ watch(
   }
 );
 
-function generateSpring(velocity: number) {
-  const tension = 150;
-  const friction = 25;
-
-  const bezierX1 = (tension * velocity) / (friction * 1000);
-  const bezierY1 = bezierX1 / tension;
-  const bezierX2 = 1 - bezierY1;
-  const bezierY2 = 1 - bezierX1;
-
-  return `cubic-bezier(${bezierX1}, ${bezierY1}, ${bezierX2}, ${bezierY2})`;
-}
-
 onMounted(() => {
   setTimeout(() => (firstRender.value = false), 1);
 });
@@ -323,7 +311,7 @@ const progress = computed(() => {
 });
 
 const transitionSpeed = computed(() => {
-  return clamp(0.4 / velocity.value, 0.3, 0.6).toFixed(2);
+  return 0.25;
 });
 
 const cubicBezierBasedOnVelocity = computed(() => {

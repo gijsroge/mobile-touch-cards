@@ -1,5 +1,5 @@
-import { ref as n, watch as w, onUnmounted as P, watchEffect as A, defineComponent as oe, onMounted as U, computed as k, openBlock as se, createElementBlock as re, normalizeStyle as ie, unref as G, normalizeClass as ue, createElementVNode as S, mergeProps as ce, renderSlot as J } from "vue";
-const b = (o, r, l) => Math.min(Math.max(o, r), l), de = (o, r, l) => {
+import { ref as n, watch as w, onUnmounted as P, watchEffect as A, defineComponent as oe, onMounted as U, computed as E, openBlock as se, createElementBlock as re, normalizeStyle as ie, unref as G, normalizeClass as ue, createElementVNode as S, mergeProps as ce, renderSlot as J } from "vue";
+const C = (o, r, l) => Math.min(Math.max(o, r), l), de = (o, r, l) => {
   let i = o;
   if (o > l) {
     const a = i - l;
@@ -14,7 +14,7 @@ const b = (o, r, l) => Math.min(Math.max(o, r), l), de = (o, r, l) => {
   w(o, (v, m) => a(m, v));
   const a = (v, m) => {
     const f = performance.now(), p = (s) => s * (2 - s), c = () => {
-      const s = performance.now() - f, g = b(s / r, 0, 1);
+      const s = performance.now() - f, g = C(s / r, 0, 1);
       l.value = p(g) * (m - v) + v, g < 1 && (i.value = requestAnimationFrame(c));
     };
     i.value = requestAnimationFrame(c);
@@ -78,7 +78,6 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       type: Number,
       default: 50
     },
-    // for ssr
     handleHeight: {
       type: Number,
       default: 50
@@ -101,7 +100,7 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     "stop-drag"
   ],
   setup(o, { emit: r }) {
-    const l = o, i = typeof document < "u", a = n(null), v = n(null), m = n(null), f = n(!1), p = n(!1), c = n(l.maxDistance), s = n(l.handleHeight), g = n(!0), D = n(!1), Y = n(0), x = n(0), u = n(0), h = n(!1), M = n(!1), R = n(0), L = n(0), T = n(1), E = n(null), z = n(null), { trap: Q, release: X } = fe(v);
+    const l = o, i = typeof document < "u", a = n(null), v = n(null), m = n(null), f = n(!1), p = n(!1), c = n(l.maxDistance), s = n(l.handleHeight), g = n(!0), k = n(!1), Y = n(0), D = n(0), u = n(0), h = n(!1), M = n(!1), R = n(0), L = n(0), x = n(1), b = n(null), z = n(null), { trap: Q, release: X } = fe(v);
     U(() => {
       window.addEventListener("click", (e) => _(e), {
         passive: !0
@@ -125,24 +124,24 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       a.value && (a.value.contains(e.target) || y());
     }, O = () => {
       R.value = new Date().getTime();
-    }, C = (e) => {
+    }, T = (e) => {
       if (e.target instanceof HTMLElement && e.target.closest("[data-ignore-drag]"))
         return;
-      T.value = 1, D.value = !0, p.value = !0;
+      x.value = 1, k.value = !0, p.value = !0;
       const t = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
       Y.value = t + u.value, O(), r("start-drag");
     };
     let N = 0;
     const B = n(!1), I = (e) => {
-      if (!D.value)
+      if (!k.value)
         return;
       const t = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
-      B.value || (N = t), B.value = !0, L.value = Math.abs(N - t), L.value > 2 && (f.value = !0), f.value && (x.value !== t && (E.value = t > x.value ? "down" : "up"), z.value !== E.value && O(), x.value = t, z.value = E.value, u.value = de(Y.value - t, 0, c.value), r("drag", u.value));
+      B.value || (N = t), B.value = !0, L.value = Math.abs(N - t), L.value > 2 && (f.value = !0), f.value && (D.value !== t && (b.value = t > D.value ? "down" : "up"), z.value !== b.value && O(), D.value = t, z.value = b.value, u.value = de(Y.value - t, 0, c.value), r("drag", u.value));
     }, j = async () => {
-      await new Promise((d) => setTimeout(d, 10)), D.value = !1, f.value = !1, setTimeout(() => p.value = !1, 300), B.value = !1;
+      await new Promise((d) => setTimeout(d, 10)), k.value = !1, f.value = !1, setTimeout(() => p.value = !1, 300), B.value = !1;
       const t = new Date().getTime() - R.value;
-      T.value = L.value / t * 1, E.value === "up" ? u.value >= l.thresHold ? u.value = c.value : u.value = 0 : u.value < c.value - l.thresHold ? u.value = 0 : u.value = c.value, r("stop-drag");
-    }, ee = k(() => {
+      x.value = L.value / t * 1, b.value === "up" ? u.value >= l.thresHold ? u.value = c.value : u.value = 0 : u.value < c.value - l.thresHold ? u.value = 0 : u.value = c.value, r("stop-drag");
+    }, ee = E(() => {
       const e = p.value ? ae.value : "cubic-bezier(0.65, 0, 0.35, 1)", t = {
         position: "fixed",
         willChange: "transform",
@@ -154,13 +153,13 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
       let d = l.closeAble ? 0 : s.value;
       return h.value && (d = s.value), t.transform = `translateY(${(u.value + d) * -1}px)`, t;
     }), H = i ? new ResizeObserver((e) => {
-      var F, V, K, W;
+      var V, F, K, W;
       if (!a.value)
         return;
-      let t = (F = e[0]) != null && F.borderBoxSize ? (K = (V = e[0]) == null ? void 0 : V.borderBoxSize[0]) == null ? void 0 : K.blockSize : null;
+      let t = (V = e[0]) != null && V.borderBoxSize ? (K = (F = e[0]) == null ? void 0 : F.borderBoxSize[0]) == null ? void 0 : K.blockSize : null;
       t || (t = (W = e[0]) == null ? void 0 : W.contentRect.height);
       const d = window.innerHeight;
-      m.value && (s.value = m.value.clientHeight), c.value = b(t, 0, d) - s.value, g.value && l.open && (u.value = c.value);
+      m.value && (s.value = m.value.clientHeight), c.value = C(t, 0, d) - s.value, g.value && l.open && (u.value = c.value);
     }) : null, te = () => {
       if (!a.value || !l.a11yWarnings)
         return;
@@ -179,7 +178,7 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
     ), U(() => {
       setTimeout(() => g.value = !1, 1);
     });
-    const ne = k(() => b(u.value / c.value, 0, 1)), le = k(() => b(0.4 / T.value, 0.3, 0.6).toFixed(2)), ae = k(() => `cubic-bezier(0.22, ${b(T.value, 1, 1.3).toFixed(
+    const ne = E(() => C(u.value / c.value, 0, 1)), le = E(() => 0.25), ae = E(() => `cubic-bezier(0.22, ${C(x.value, 1, 1.3).toFixed(
       2
     )}, 0.35, 1)`), { animatedProgress: q } = ve({
       progress: ne,
@@ -213,15 +212,15 @@ const me = `<svg width="70" height="3" viewBox="0 0 70 3" xmlns="http://www.w3.o
         style: { marginTop: "0px !important", touchAction: "none" },
         onTouchend: t[2] || (t[2] = () => j()),
         onTouchmovePassive: I,
-        onMousedown: t[3] || (t[3] = (d) => o.dragEntireCard ? C(d) : null),
-        onTouchstartPassive: t[4] || (t[4] = (d) => o.dragEntireCard ? C(d) : null)
+        onMousedown: t[3] || (t[3] = (d) => o.dragEntireCard ? T(d) : null),
+        onTouchstartPassive: t[4] || (t[4] = (d) => o.dragEntireCard ? T(d) : null)
       }), [
         S("button", {
           ref_key: "handleRef",
           ref: m,
           onClick: Z,
-          onMousedown: t[0] || (t[0] = (d) => o.dragEntireCard ? null : C(d)),
-          onTouchstartPassive: t[1] || (t[1] = (d) => o.dragEntireCard ? null : C(d)),
+          onMousedown: t[0] || (t[0] = (d) => o.dragEntireCard ? null : T(d)),
+          onTouchstartPassive: t[1] || (t[1] = (d) => o.dragEntireCard ? null : T(d)),
           "aria-label": o.ariaLabel
         }, [
           J(e.$slots, "handle", {}, () => [
