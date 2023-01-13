@@ -323,11 +323,11 @@ const progress = computed(() => {
 });
 
 const transitionSpeed = computed(() => {
-  return clamp(0.4 / velocity.value, 0.05, 0.2).toFixed(2);
+  return clamp(0.4 / velocity.value, 0.3, 0.6).toFixed(2);
 });
 
 const cubicBezierBasedOnVelocity = computed(() => {
-  return `cubic-bezier(0.22, ${clamp(velocity.value, 1, 1.8).toFixed(
+  return `cubic-bezier(0.22, ${clamp(velocity.value, 1, 1.3).toFixed(
     2
   )}, 0.35, 1)`;
 });
